@@ -29,9 +29,12 @@ interface PlayerDAO {
     suspend fun updatePlayer(player: Player)
 
     @Query("UPDATE player_table SET money = money + :Money WHERE id =:Id")
-    fun updatePlayerMoney(Money:Int, Id:Int)
+    fun updatePlayerMoney(Id:Int, Money:Int)
 
     @Query("UPDATE player_table SET score = score + :Score WHERE id =:Id")
-    fun updatePlayerScore(Score:Int, Id:Int)
+    fun updatePlayerScore(Id:Int, Score:Int)
 
+    //aggiorna i soldi + quelli guadagnati e lo score con quello attuale
+    @Query("UPDATE player_table SET money = money + :Money, score = CASE WHEN score > :Score THEN score ELSE :Score END WHERE id = :Id")
+    fun updatePlayerMoneyScore(Id: Int, Money: Int, Score: Int)
 }

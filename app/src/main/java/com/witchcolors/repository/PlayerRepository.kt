@@ -22,12 +22,16 @@ class PlayerRepository(private val playerDAO: PlayerDAO) {
         playerDAO.updatePlayer(player)
     }
 
-    suspend fun updatePlayerMoney(Money:Int, Id:Int){
-        playerDAO.updatePlayerMoney(Money, Id)
+    fun updatePlayerMoneyScore(Id:Int, Money:Int, Score:Int){
+        playerDAO.updatePlayerMoneyScore(Id,Money,Score)
     }
 
-    suspend fun updatePlayerScore(Score:Int, Id:Int){
-        playerDAO.updatePlayerScore(Score, Id)
+    fun updatePlayerMoney(Id:Int,Money:Int){
+        playerDAO.updatePlayerMoney(Id,Money)
+    }
+
+    fun updatePlayerScore(Id:Int,Score: Int){
+        playerDAO.updatePlayerScore(Id,Score)
     }
 
 }

@@ -13,7 +13,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LiveData
 import com.witchcolors.DAO.PlayerDAO
 import com.witchcolors.config.GameDatabase
 import com.witchcolors.model.Player
@@ -21,6 +20,7 @@ import com.witchcolors.repository.PlayerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.appcompat.app.AlertDialog
 
 class GameActivity : AppCompatActivity() {
 
@@ -30,7 +30,6 @@ class GameActivity : AppCompatActivity() {
     private lateinit var moneyText: TextView
     private lateinit var timerText: TextView
     private lateinit var objectsLayout: LinearLayout
-    private lateinit var returnButton: Button
     private lateinit var playerRep: PlayerRepository
     private lateinit var playerDAO: PlayerDAO
 
@@ -79,15 +78,6 @@ class GameActivity : AppCompatActivity() {
         moneyText = findViewById(R.id.money)
         timerText = findViewById(R.id.timer)
         objectsLayout = findViewById(R.id.objectsLayout)
-        returnButton = findViewById(R.id.returnButton)
-
-        //Buttons
-        returnButton.setOnClickListener {
-            // Torna al menu principale
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
 
         //level start from 0
         startNewLevel()
@@ -135,29 +125,92 @@ class GameActivity : AppCompatActivity() {
             // potenziamento ogni 10 livelli
             if (currentLevel % 10 == 0) {
                 grantUpgrade()
+            }else{
+                showVictory()
             }
-            // Aggiorna le statistiche
-            showVictory()
+
         } else {
             lives--
-            livesText.text = "Vite: $lives"
             if (lives <= 0) {
+                livesText.text = "Vite: $lives"
                 showGameOver()
+            }else {
+                livesText.text = "Vite: $lives"
             }
         }
     }
 
+    private fun getColorFromName(colorName: String): Int {
+        return when (colorName) {
+            "Rosso" -> Color.RED
+            "Blu" -> Color.BLUE
+            "Verde" -> Color.GREEN
+            "Giallo" -> Color.YELLOW
+            else -> Color.TRANSPARENT
+        }
+    }
+
     private fun showVictory() {
-        Toast.makeText(this, "Hai vinto! Un nuovo colore è stato generato!", Toast.LENGTH_SHORT).show()
+        //aggiungere un qualcosa che fa capire che hai vinto
         stopTimer()
         startNewLevel()
     }
 
+    private fun showGameOver() {
+        stopTimer()
+        val hasReviveToken = checkReviveToken()
+
+        // Crea il dialogo
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Game Over")
+        builder.setMessage("Tempo scaduto!")
+
+        // Se l'utente ha un "Gettone Rinascita"
+        if (hasReviveToken) {
+            builder.setPositiveButton("Usa Gettone") { dialog, which ->
+                useReviveToken()
+                dialog.dismiss()
+                startNewLevel() // Riprende il gioco dal livello corrente
+            }
+        }
+
+        // Torna al menu
+        builder.setNegativeButton("Torna al Menu") { dialog, which ->
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        // impedisce la chiusura
+        builder.setCancelable(false)
+        builder.show()
+
+        UpdateDatabase()
+    }
+
     private fun grantUpgrade() {
+        stopTimer()
         val upgrades = listOf("Potenziamento 1", "Potenziamento 2", "Potenziamento 3")
         val randomUpgrade = upgrades.random()
-        Toast.makeText(this, "Hai ricevuto: $randomUpgrade!", Toast.LENGTH_SHORT).show()
-        // Implementa la logica del potenziamento qui
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Potenziamento")
+        builder.setMessage("Hai ricevuto: $randomUpgrade")
+
+        builder.setPositiveButton("Avanti") { dialog, which ->
+            dialog.dismiss()
+            startNewLevel()
+        }
+        builder.setNegativeButton("Torna al Menu") { dialog, which ->
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        // Impedisce la chiusura
+        builder.setCancelable(false)
+        builder.show()
+
         UpdateDatabase()
     }
 
@@ -180,31 +233,34 @@ class GameActivity : AppCompatActivity() {
         timerText.text = "Tempo: ${timeLeft / 1000}"
     }
 
-    private fun showGameOver() {
-        stopTimer()
-        Toast.makeText(this, "Tempo scaduto! Torna al menu.", Toast.LENGTH_SHORT).show()
-        returnButton.visibility = View.VISIBLE
-        UpdateDatabase()
-        Toast.makeText(this, "Database updated", Toast.LENGTH_SHORT).show()
+    private fun checkReviveToken(): Boolean {
+       /* // Simulazione: Controlla se il player ha un gettone rinascita (modifica con la logica del tuo inventario)
+        val player = playerRep.getPlayer().value
+        return player?.inventory?.contains("Gettone Rinascita") ?: false*/
+        return false
     }
 
-    private fun getColorFromName(colorName: String): Int {
-        return when (colorName) {
-            "Rosso" -> Color.RED
-            "Blu" -> Color.BLUE
-            "Verde" -> Color.GREEN
-            "Giallo" -> Color.YELLOW
-            else -> Color.TRANSPARENT
-        }
+    private fun useReviveToken() {
+       /* CoroutineScope(Dispatchers.IO).launch {
+            val player = playerRep.getPlayer().value
+            player?.let {
+                // Rimuovi il gettone rinascita dall'inventario
+                it.inventory.remove("Gettone Rinascita")
+
+                // Aggiungi una vita o resetta lo stato di gioco
+                lives = 1
+                livesText.text = "Vite: $lives"
+
+                // Aggiorna il giocatore nel database
+                playerRep.updatePlayer(it)
+            }
+        }*/
     }
 
-    //Persistenza tra sessioni non funziona
     fun UpdateDatabase() {
-        val currentMoney = playerRep.money
         //aggiorna con i valori attuali deve fare moneycurrent + money
         CoroutineScope(Dispatchers.IO).launch {
-            val p = Player(id=1, money=money, score=score)
-            playerRep.updatePlayer(p)
+            playerRep.updatePlayerMoneyScore(Id = 1, Money = money, Score = score )
         }
     }
 

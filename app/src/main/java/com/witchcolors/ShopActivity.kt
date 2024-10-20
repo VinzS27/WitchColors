@@ -52,13 +52,19 @@ class ShopActivity : AppCompatActivity() {
                     )
         }
 
+        //init variable
         moneyText = findViewById(R.id.moneyTextView)
         skinButton = findViewById(R.id.skinButton)
         reviveButton = findViewById(R.id.reviveButton)
 
+        //Get player from db
+        playerDAO = GameDatabase.getDatabase(application).playerDao()
+        playerRep = PlayerRepository(playerDAO)
+
+        init()
         UpdateUI()
 
-        // Acquista una skin
+        /*// Acquista una skin
         skinButton.setOnClickListener {
             val skin = Item(name = "Skin speciale", type = "Skin", price = 50)
             //buyItem(skin)
@@ -68,7 +74,20 @@ class ShopActivity : AppCompatActivity() {
         reviveButton.setOnClickListener {
             val reviveItem = Item(name = "Revive", type = "Oggetto speciale", price = 100)
             //buyItem(reviveItem)
+        }*/
+    }
+
+    private fun init() {
+        // Coroutine per eseguire operazioni di database in background
+        CoroutineScope(Dispatchers.IO).launch {
+            val player: LiveData<List<Player>> = playerRep.getPlayer
         }
+    }
+
+    // Aggiorna la UI quando si torna alla schermata principale
+    override fun onResume() {
+        super.onResume()
+        UpdateUI()
     }
 
     private fun UpdateUI() {
