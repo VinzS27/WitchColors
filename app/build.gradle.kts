@@ -1,6 +1,9 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs.kotlin") // for pure kotlin
+    id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -37,12 +40,15 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+    configurations {
+        implementation.get().exclude(mapOf("group" to "org.jetbrains", "module" to "annotations"))
     }
 }
 
@@ -57,6 +63,30 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
+
+    // Navigation Component
+    implementation (libs.androidx.navigation.fragment.ktx)
+    implementation (libs.androidx.navigation.ui.ktx)
+
+    // Room components
+    implementation(libs.androidx.room.compiler.v261)
+    implementation(libs.androidx.room.runtime.v261)
+    implementation(libs.androidx.room.ktx.v261)
+    androidTestImplementation (libs.androidx.room.testing)
+
+    //DataBinding
+    ksp(libs.androidx.room.compiler.v261)
+
+    // Lifecycle components
+    implementation (libs.androidx.lifecycle.extensions)
+    implementation (libs.androidx.lifecycle.common.java8)
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
+
+    // Kotlin components
+    implementation (libs.kotlin.stdlib.jdk7)
+    api (libs.kotlinx.coroutines.core)
+    api (libs.kotlinx.coroutines.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

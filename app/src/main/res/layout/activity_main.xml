@@ -4,6 +4,23 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
+    <TextView
+        android:id="@+id/money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Soldi: 0"
+        android:textSize="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp"/>
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Score: 0"
+        android:textSize="20dp"
+        android:layout_toRightOf="@+id/money"
+        android:layout_margin="16dp"/>
+
     <!-- dp per il testo così resta sempre uguale da provare -->
     <TextView
         android:id="@+id/title"
@@ -12,8 +29,7 @@
         android:text="The witch of colors"
         android:textSize="24dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"/>
-
+        android:layout_marginTop="70dp"/>
     <Button
         android:id="@+id/classicChallengeButton"
         android:layout_width="wrap_content"
@@ -21,14 +37,29 @@
         android:text="Sfida Classica"
         android:layout_below="@id/title"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"/>
-
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/Adventure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Avventura"
+        android:layout_below="@id/classicChallengeButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
     <Button
         android:id="@+id/shopButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Shop"
-        android:layout_below="@id/classicChallengeButton"
+        android:layout_below="@id/Adventure"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="10dp"/>
+    <Button
+        android:id="@+id/Setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Impostazioni"
+        android:layout_below="@id/shopButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
 </RelativeLayout>

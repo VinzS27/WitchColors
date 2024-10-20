@@ -18,7 +18,7 @@
             android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:theme="@style/AppTheme.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,12 +29,12 @@
             android:name=".ShopActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/AppTheme.FullScreen"/>
         <activity
             android:name=".GameActivity"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/AppTheme.FullScreen"/>
     </application>
 
 </manifest>

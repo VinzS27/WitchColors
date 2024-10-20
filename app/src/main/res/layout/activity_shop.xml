@@ -1,16 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/shopTitle"
+        android:id="@+id/moneyTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Shop"
-        android:textSize="24sp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"/>
+        android:text="Soldi: 0"
+        android:textSize="18dp" />
 
-    <!-- Aggiungi qui gli oggetti acquistabili -->
-</RelativeLayout>
+    <Button
+        android:id="@+id/skinButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Skin Speciale (50 soldi)"
+        android:layout_marginTop="20dp"/>
+
+    <Button
+        android:id="@+id/reviveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rinascita (100 soldi)"
+        android:layout_marginTop="20dp"/>
+</LinearLayout>
+
