@@ -11,8 +11,8 @@ data class Player(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     var money: Int = 0,
-    var score: Int = 0, ): Parcelable
+    var score: Int = 0,
+    ): Parcelable
 {
 
-    //var inventory: List<Item> = mutableListOf()
 }

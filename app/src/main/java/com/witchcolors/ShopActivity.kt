@@ -10,23 +10,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
-import com.witchcolors.DAO.PlayerDAO
+import com.witchcolors.DAO.GameDAO
 import com.witchcolors.model.Item
 import com.witchcolors.model.Player
 import com.witchcolors.config.GameDatabase
-import com.witchcolors.repository.PlayerRepository
+import com.witchcolors.repository.GameRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class ShopActivity : AppCompatActivity() {
 
     private lateinit var moneyText: TextView
     private lateinit var skinButton: Button
     private lateinit var reviveButton: Button
-    private lateinit var playerRep: PlayerRepository
-    private lateinit var playerDAO: PlayerDAO
+    private lateinit var gameRep: GameRepository
+    private lateinit var gameDAO: GameDAO
     private lateinit var player: Player
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,33 +53,17 @@ class ShopActivity : AppCompatActivity() {
 
         //init variable
         moneyText = findViewById(R.id.moneyTextView)
-        skinButton = findViewById(R.id.skinButton)
         reviveButton = findViewById(R.id.reviveButton)
 
         //Get player from db
-        playerDAO = GameDatabase.getDatabase(application).playerDao()
-        playerRep = PlayerRepository(playerDAO)
+        gameDAO = GameDatabase.getDatabase(application).gameDao()
+        gameRep = GameRepository(gameDAO)
 
-        init()
         UpdateUI()
 
-        /*// Acquista una skin
-        skinButton.setOnClickListener {
-            val skin = Item(name = "Skin speciale", type = "Skin", price = 50)
-            //buyItem(skin)
-        }
-
-        // Acquista un oggetto per resuscitare
         reviveButton.setOnClickListener {
-            val reviveItem = Item(name = "Revive", type = "Oggetto speciale", price = 100)
-            //buyItem(reviveItem)
-        }*/
-    }
-
-    private fun init() {
-        // Coroutine per eseguire operazioni di database in background
-        CoroutineScope(Dispatchers.IO).launch {
-            val player: LiveData<List<Player>> = playerRep.getPlayer
+            val reviveToken = "Resurrection_Token"
+            buyItems(reviveToken)
         }
     }
 
@@ -91,16 +74,18 @@ class ShopActivity : AppCompatActivity() {
     }
 
     private fun UpdateUI() {
-        playerRep.money.observe(this) { moneyValue ->
+        gameRep.money.observe(this) { moneyValue ->
             moneyText.text = "Soldi: $moneyValue"}
     }
 
-    private suspend fun buyItem(item: Item) {
-        //logica d'acquisto
-    }
-
-    private suspend fun savePlayerData() {
-        //logica di aggiornamento money e inventario db
+    private fun buyItems(itemName:String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val item: Item? = gameDAO.getItemByName(itemName = itemName)
+            if(item != null) {
+                gameRep.buyItem(1, item.id, item.price)
+            }
+        }
+        UpdateUI()
     }
 
     // FULLSCREEN RESET ON TOUCH

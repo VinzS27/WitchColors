@@ -47,11 +47,19 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"/>
     <Button
+        android:id="@+id/Gallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gallery"
+        android:layout_below="@id/Adventure"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"/>
+    <Button
         android:id="@+id/shopButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Shop"
-        android:layout_below="@id/Adventure"
+        android:layout_below="@id/Gallery"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"/>
     <Button

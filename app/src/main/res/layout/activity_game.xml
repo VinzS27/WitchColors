@@ -4,6 +4,40 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Soldi: 0"
+        android:textSize="15dp"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp"/>
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Punteggio: 0"
+        android:textSize="15dp"
+        android:layout_toRightOf="@+id/money"
+        android:layout_margin="16dp"/>
+    <TextView
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Timer: 30"
+        android:textSize="15dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"/>
+
+    <TextView
+        android:id="@+id/lives"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vite: 3"
+        android:textSize="15dp"
+        android:layout_below="@+id/money"
+        android:layout_margin="16dp"/>
+
+    <TextView
         android:id="@+id/colorToFind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -11,89 +45,121 @@
         android:textStyle="bold"
         android:textSize="20dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"/>
+        android:layout_below="@+id/lives"
+        android:layout_marginTop="20dp"/>
 
-    <TextView
-        android:id="@+id/lives"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Vite: 3"
-        android:textSize="20dp"
-        android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
-
-    <TextView
-        android:id="@+id/score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Punteggio: 0"
-        android:textSize="20dp"
-        android:layout_toRightOf="@+id/money"
-        android:layout_margin="16dp"/>
-
-    <TextView
-        android:id="@+id/timer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Timer: 30"
-        android:textSize="20dp"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"/>
-
-    <TextView
-        android:id="@+id/money"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Soldi: 0"
-        android:textSize="20dp"
-        android:layout_toRightOf="@+id/lives"
-        android:layout_margin="16dp"/>
-
-    <!-- Layout orizzontale per gli oggetti colorati -->
-    <LinearLayout
+   <!-- Layout per gli oggetti colorati in griglia -->
+    <GridLayout
         android:id="@+id/objectsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/colorToFind"
-        android:layout_marginTop="50dp"
-        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="30dp"
+        android:background="@android:color/darker_gray"
+        android:columnCount="3"
+        android:rowCount="3"
         android:gravity="center">
 
         <!-- Oggetto colorato 1 (rosso) -->
         <ImageView
             android:id="@+id/objectRed"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
             android:background="@android:color/holo_red_dark"
             android:layout_margin="10dp"
+            android:layout_columnWeight="1"
             android:contentDescription="Oggetto rosso"/>
 
         <!-- Oggetto colorato 2 (blu) -->
         <ImageView
-            android:id="@+id/objectBlue"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@android:color/holo_blue_dark"
+            android:id="@+id/objectLightBlue"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="#77D3FD"
             android:layout_margin="10dp"
-            android:contentDescription="Oggetto blu"/>
+            android:layout_columnWeight="1"
+            android:contentDescription="Oggetto celeste"/>
 
         <!-- Oggetto colorato 3 (verde) -->
         <ImageView
             android:id="@+id/objectGreen"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
             android:background="@android:color/holo_green_dark"
             android:layout_margin="10dp"
+            android:layout_columnWeight="1"
             android:contentDescription="Oggetto verde"/>
 
         <!-- Oggetto colorato 4 (giallo) -->
         <ImageView
             android:id="@+id/objectYellow"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
             android:background="@android:color/holo_orange_light"
             android:layout_margin="10dp"
+            android:layout_columnWeight="1"
             android:contentDescription="Oggetto giallo"/>
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/objectWhite"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@android:color/white"
+            android:layout_margin="10dp"
+            android:layout_columnWeight="1"
+            android:contentDescription="Oggetto bianco"/>
+
+        <!-- Oggetto colorato 6 (arancione) -->
+        <ImageView
+            android:id="@+id/objectOrange"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="#FF5722"
+            android:layout_margin="10dp"
+            android:layout_columnWeight="1"
+            android:contentDescription="Oggetto arancione"/>
+
+        <!-- Oggetto colorato 7 (viola) -->
+        <ImageView
+            android:id="@+id/objectPurple"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="#AE52D5"
+            android:layout_margin="10dp"
+            android:layout_columnWeight="1"
+            android:contentDescription="Oggetto viola"/>
+
+        <!-- Oggetto colorato 8 (rosa) -->
+        <ImageView
+            android:id="@+id/objectPink"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="#FFC0CB"
+            android:layout_margin="10dp"
+            android:layout_columnWeight="1"
+            android:contentDescription="Oggetto rosa"/>
+
+        <!-- Oggetto colorato 9 (grigio) -->
+        <ImageView
+            android:id="@+id/objectBlue"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="#122494"
+            android:layout_margin="10dp"
+            android:layout_columnWeight="1"
+            android:contentDescription="Oggetto grigio"/>
+
+        <ImageView
+            android:id="@+id/objectBlack"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:background="@android:color/black"
+            android:layout_margin="10dp"
+            android:layout_columnWeight="1"
+            android:contentDescription="Oggetto nero"/>
+
+    </GridLayout>
 </RelativeLayout>

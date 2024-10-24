@@ -1,6 +1,5 @@
 package com.witchcolors
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -11,10 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.LiveData
-import com.witchcolors.DAO.PlayerDAO
+import com.witchcolors.DAO.GameDAO
 import com.witchcolors.config.GameDatabase
 import com.witchcolors.model.Player
-import com.witchcolors.repository.PlayerRepository
+import com.witchcolors.repository.GameRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,8 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var moneyText: TextView
     private lateinit var scoreText: TextView
-    private lateinit var playerRep: PlayerRepository
-    private lateinit var playerDAO: PlayerDAO
+    private lateinit var gameRep: GameRepository
+    private lateinit var gameDAO: GameDAO
     private lateinit var classicChallengeButton: Button
     private lateinit var shopButton: Button
 
@@ -60,10 +59,9 @@ class MainActivity : AppCompatActivity() {
         scoreText = findViewById(R.id.score)
 
         //init database
-        playerDAO = GameDatabase.getDatabase(application).playerDao()
-        playerRep = PlayerRepository(playerDAO)
+        gameDAO = GameDatabase.getDatabase(application).gameDao()
+        gameRep = GameRepository(gameDAO)
 
-        initializePlayer()
         UpdateUI()
 
         classicChallengeButton.setOnClickListener {
@@ -76,22 +74,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-    private fun initializePlayer() {
-        // Coroutine per eseguire operazioni di database in background
-        CoroutineScope(Dispatchers.IO).launch {
-            val player: LiveData<List<Player>> = playerRep.getPlayer
-             //Se non c'è alcun giocatore, crea un nuovo giocatore con valori di default
-            if (player == null) {
-                val defaultPlayer = Player(money = 1000, score = 0) // Valori di default
-                playerRep.insertPlayer(defaultPlayer)
-            }
-        }
-    }
 
     private fun UpdateUI() {
-        playerRep.money.observe(this) { moneyValue ->
+        gameRep.money.observe(this) { moneyValue ->
             moneyText.text = "Soldi: $moneyValue"}
-        playerRep.score.observe(this){ scoreValue ->
+        gameRep.score.observe(this){ scoreValue ->
             scoreText.text = "Score: $scoreValue"}
     }
     // Aggiorna la UI quando si torna alla schermata principale

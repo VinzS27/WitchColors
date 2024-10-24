@@ -1,5 +1,6 @@
 package com.witchcolors
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -9,18 +10,19 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.Button
+import android.widget.GridLayout
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.witchcolors.DAO.PlayerDAO
+import com.witchcolors.DAO.GameDAO
 import com.witchcolors.config.GameDatabase
-import com.witchcolors.model.Player
-import com.witchcolors.repository.PlayerRepository
+import com.witchcolors.repository.GameRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
+import com.witchcolors.model.Item
+import kotlinx.coroutines.cancel
 
 class GameActivity : AppCompatActivity() {
 
@@ -29,9 +31,10 @@ class GameActivity : AppCompatActivity() {
     private lateinit var livesText: TextView
     private lateinit var moneyText: TextView
     private lateinit var timerText: TextView
-    private lateinit var objectsLayout: LinearLayout
-    private lateinit var playerRep: PlayerRepository
-    private lateinit var playerDAO: PlayerDAO
+    private lateinit var objectsLayout: GridLayout
+    private lateinit var gameRep: GameRepository
+    private lateinit var gameDAO: GameDAO
+    private lateinit var colors: List<String>
 
     private var score = 0
     private var lives = 3
@@ -40,7 +43,9 @@ class GameActivity : AppCompatActivity() {
     private var targetColor: String = ""
     private var timer: CountDownTimer? = null
     private var timeLeft: Long = 30000 // 60 seconds
+    private var ReviveStatus: Boolean = false
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,8 +73,8 @@ class GameActivity : AppCompatActivity() {
         }
 
         //Get player from db
-        playerDAO = GameDatabase.getDatabase(application).playerDao()
-        playerRep = PlayerRepository(playerDAO)
+        gameDAO = GameDatabase.getDatabase(application).gameDao()
+        gameRep = GameRepository(gameDAO)
 
         // Inizializzazione delle variabili xml
         colorToFind = findViewById(R.id.colorToFind)
@@ -78,6 +83,7 @@ class GameActivity : AppCompatActivity() {
         moneyText = findViewById(R.id.money)
         timerText = findViewById(R.id.timer)
         objectsLayout = findViewById(R.id.objectsLayout)
+        colors = listOf("Rosso", "Blu", "Verde", "Giallo", "Rosa", "Nero", "Celeste", "Arancione", "Viola", "Bianco")
 
         //level start from 0
         startNewLevel()
@@ -88,21 +94,15 @@ class GameActivity : AppCompatActivity() {
             showGameOver()
             return
         }
-        targetColor = getNewColor() // Funzione per ottenere un nuovo colore
+        targetColor = colors.random() // Funzione per ottenere un nuovo colore
         colorToFind.text = "Trova il colore: $targetColor"
         setupObjects() // Funzione per impostare gli oggetti colorati
 
         startTimer()
     }
 
-    private fun getNewColor(): String {
-        val colors = listOf("Rosso", "Blu", "Verde", "Giallo")
-        return colors.random()
-    }
-
     private fun setupObjects() {
         objectsLayout.removeAllViews()
-        val colors = listOf("Rosso", "Blu", "Verde", "Giallo") // Colori disponibili
         for (color in colors) {
             val colorView = Button(this)
             colorView.text = color
@@ -146,6 +146,12 @@ class GameActivity : AppCompatActivity() {
             "Blu" -> Color.BLUE
             "Verde" -> Color.GREEN
             "Giallo" -> Color.YELLOW
+            "Rosa" -> Color.parseColor("#FFC0CB")
+            "Bianco" -> Color.WHITE
+            "Viola" -> Color.parseColor("#AE52D5")
+            "Nero" -> Color.BLACK
+            "Celeste" -> Color.CYAN
+            "Arancione" -> Color.parseColor("#FF5722")
             else -> Color.TRANSPARENT
         }
     }
@@ -160,15 +166,15 @@ class GameActivity : AppCompatActivity() {
         stopTimer()
         val hasReviveToken = checkReviveToken()
 
-        // Crea il dialogo
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Game Over")
         builder.setMessage("Tempo scaduto!")
 
-        // Se l'utente ha un "Gettone Rinascita"
+        // Se hai un "Gettone Rinascita"
         if (hasReviveToken) {
-            builder.setPositiveButton("Usa Gettone") { dialog, which ->
-                useReviveToken()
+            builder.setPositiveButton("Rinascita(1 volta)") { dialog, which ->
+                //useReviveToken()
+                ReviveStatus = true
                 dialog.dismiss()
                 startNewLevel() // Riprende il gioco dal livello corrente
             }
@@ -185,7 +191,7 @@ class GameActivity : AppCompatActivity() {
         builder.setCancelable(false)
         builder.show()
 
-        UpdateDatabase()
+        UpdateMoneyScore()
     }
 
     private fun grantUpgrade() {
@@ -211,7 +217,7 @@ class GameActivity : AppCompatActivity() {
         builder.setCancelable(false)
         builder.show()
 
-        UpdateDatabase()
+        UpdateMoneyScore()
     }
 
     private fun startTimer() {
@@ -233,16 +239,29 @@ class GameActivity : AppCompatActivity() {
         timerText.text = "Tempo: ${timeLeft / 1000}"
     }
 
+    // NON FUNZIONA PERCHE' IL CHECK E' SEMPRE FALSE DATO CHE IL TRUE é DENTRO UNA COROUTINE
     private fun checkReviveToken(): Boolean {
-       /* // Simulazione: Controlla se il player ha un gettone rinascita (modifica con la logica del tuo inventario)
-        val player = playerRep.getPlayer().value
-        return player?.inventory?.contains("Gettone Rinascita") ?: false*/
-        return false
+        //Se sei già stato resuscitato una volta
+        if (ReviveStatus == true) {
+            return false
+        }
+        var check = false
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val item: Item? = gameDAO.getItemByName(itemName = "Resurrection_Token")
+            if(item != null) {
+                if(item.playerItemId?.equals(1) == true) {
+                    check = true
+                    cancel()
+                }
+            }
+        }
+        return check
     }
 
-    private fun useReviveToken() {
-       /* CoroutineScope(Dispatchers.IO).launch {
-            val player = playerRep.getPlayer().value
+    /*private fun useReviveToken() {
+       CoroutineScope(Dispatchers.IO).launch {
+            val player = gameRep.getPlayer().value
             player?.let {
                 // Rimuovi il gettone rinascita dall'inventario
                 it.inventory.remove("Gettone Rinascita")
@@ -252,15 +271,15 @@ class GameActivity : AppCompatActivity() {
                 livesText.text = "Vite: $lives"
 
                 // Aggiorna il giocatore nel database
-                playerRep.updatePlayer(it)
+                gameRep.updatePlayer(it)
             }
-        }*/
-    }
+        }
+    }*/
 
-    fun UpdateDatabase() {
+    fun UpdateMoneyScore() {
         //aggiorna con i valori attuali deve fare moneycurrent + money
         CoroutineScope(Dispatchers.IO).launch {
-            playerRep.updatePlayerMoneyScore(Id = 1, Money = money, Score = score )
+            gameRep.updatePlayerMoneyScore(Id = 1, Money = money, Score = score )
         }
     }
 
