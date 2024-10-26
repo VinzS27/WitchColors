@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import com.witchcolors.DAO.GameDAO
 import com.witchcolors.model.Item
 import com.witchcolors.model.Player
-import com.witchcolors.model.PlayerWithGallery
-import com.witchcolors.model.PlayerWithItems
 
 class GameRepository(private val gameDAO: GameDAO) {
 
@@ -13,7 +11,6 @@ class GameRepository(private val gameDAO: GameDAO) {
     val getPlayer: LiveData<List<Player>> = gameDAO.getPlayer()
     val money: LiveData<Int?> = gameDAO.getMoney()
     val score: LiveData<Int?> = gameDAO.getScore()
-
     //ITEM
     val getAllItems: LiveData<List<Item>> = gameDAO.getAllItems()
 
@@ -30,31 +27,21 @@ class GameRepository(private val gameDAO: GameDAO) {
     //------------- ITEM REPOSITORY ----------------
 
     suspend fun getItemByName(itemName: String){
-        gameDAO.getItemIdByName(itemName)
+        gameDAO.getItemByName(itemName)
     }
 
-    suspend fun assignItemToPlayer(itemId: Int, playerId: Int){
-        gameDAO.assignItemToPlayer(itemId,playerId)
+    fun getQuantityByName(itemName: String){
+        gameDAO.getQuantityByName(itemName)
+    }
+
+    suspend fun updateItemQuantityById(Id:Int, Quantity:Int){
+        gameDAO.updateItemQuantityById(Id,Quantity)
     }
 
     suspend fun buyItem(id: Int, itemId: Int, itemPrice: Int) {
         if(itemPrice.toString() <= money.toString()){
             updatePlayerMoney(id, -itemPrice) // Sottrae il costo
-            assignItemToPlayer(itemId, id)// Assegna l'item al giocatore
+            updateItemQuantityById(itemId,1)
         }
-    }
-
-    suspend fun removeItemFromInventory(playerId: Int, itemId: Int, amount: Int) {
-        gameDAO.removeItemFromInventory(playerId, itemId, amount)
-    }
-
-    //-----------PLAYER WITH ITEMS--------------------
-    suspend fun getPlayerWithItems(playerItemId: Int): PlayerWithItems {
-        return gameDAO.getPlayerWithItems(playerItemId)
-    }
-
-    //-----------PLAYER WITH GALLERY--------------------
-    suspend fun getPlayerWithGallery(playerGalleryId: Int): PlayerWithGallery {
-        return gameDAO.getPlayerWithGallery(playerGalleryId)
     }
 }

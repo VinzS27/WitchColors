@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.LiveData
 import com.witchcolors.model.Item
 import kotlinx.coroutines.cancel
 
@@ -44,6 +45,7 @@ class GameActivity : AppCompatActivity() {
     private var timer: CountDownTimer? = null
     private var timeLeft: Long = 30000 // 60 seconds
     private var ReviveStatus: Boolean = false
+    private var hasReviveToken: Boolean = false
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,6 +89,16 @@ class GameActivity : AppCompatActivity() {
 
         //level start from 0
         startNewLevel()
+
+        //Check if player have the revive token
+        CoroutineScope(Dispatchers.IO).launch {
+            val item: Item? = gameDAO.getItemByName(itemName = "Resurrection_Token")
+            if (item != null) {
+                if (item.quantity > 0) {
+                    hasReviveToken = true
+                }
+            }
+        }
     }
 
     private fun startNewLevel() {
@@ -164,17 +176,15 @@ class GameActivity : AppCompatActivity() {
 
     private fun showGameOver() {
         stopTimer()
-        val hasReviveToken = checkReviveToken()
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Game Over")
         builder.setMessage("Tempo scaduto!")
 
         // Se hai un "Gettone Rinascita"
-        if (hasReviveToken) {
+        if (hasReviveToken && !ReviveStatus) {
             builder.setPositiveButton("Rinascita(1 volta)") { dialog, which ->
-                //useReviveToken()
-                ReviveStatus = true
+                useReviveToken()
                 dialog.dismiss()
                 startNewLevel() // Riprende il gioco dal livello corrente
             }
@@ -239,44 +249,23 @@ class GameActivity : AppCompatActivity() {
         timerText.text = "Tempo: ${timeLeft / 1000}"
     }
 
-    // NON FUNZIONA PERCHE' IL CHECK E' SEMPRE FALSE DATO CHE IL TRUE é DENTRO UNA COROUTINE
-    private fun checkReviveToken(): Boolean {
-        //Se sei già stato resuscitato una volta
-        if (ReviveStatus == true) {
-            return false
-        }
-        var check = false
+    private fun useReviveToken() {
+        // Aggiungi una vita o resetta lo stato di gioco
+        lives = 1
+        livesText.text = "Vite: $lives"
+        ReviveStatus = true
 
         CoroutineScope(Dispatchers.IO).launch {
             val item: Item? = gameDAO.getItemByName(itemName = "Resurrection_Token")
             if(item != null) {
-                if(item.playerItemId?.equals(1) == true) {
-                    check = true
-                    cancel()
+                if((item.quantity > 0) == true) {
+                    gameRep.updateItemQuantityById(Id=item.id,Quantity=-1)
                 }
             }
         }
-        return check
     }
 
-    /*private fun useReviveToken() {
-       CoroutineScope(Dispatchers.IO).launch {
-            val player = gameRep.getPlayer().value
-            player?.let {
-                // Rimuovi il gettone rinascita dall'inventario
-                it.inventory.remove("Gettone Rinascita")
-
-                // Aggiungi una vita o resetta lo stato di gioco
-                lives = 1
-                livesText.text = "Vite: $lives"
-
-                // Aggiorna il giocatore nel database
-                gameRep.updatePlayer(it)
-            }
-        }
-    }*/
-
-    fun UpdateMoneyScore() {
+    private fun UpdateMoneyScore() {
         //aggiorna con i valori attuali deve fare moneycurrent + money
         CoroutineScope(Dispatchers.IO).launch {
             gameRep.updatePlayerMoneyScore(Id = 1, Money = money, Score = score )

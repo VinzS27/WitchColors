@@ -5,12 +5,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
-import androidx.room.Update
 import com.witchcolors.model.Item
 import com.witchcolors.model.Player
-import com.witchcolors.model.PlayerWithGallery
-import com.witchcolors.model.PlayerWithItems
 
 @Dao
 interface GameDAO {
@@ -42,33 +38,13 @@ interface GameDAO {
     @Query("SELECT * FROM item_table WHERE name = :itemName LIMIT 1")
     suspend fun getItemByName(itemName: String): Item?
 
-    @Query("SELECT id FROM item_table WHERE name = :itemName LIMIT 1")
-    fun getItemIdByName(itemName: String): Int?
-
-    @Query("SELECT * FROM item_table WHERE name = :itemName AND playerItemId = :playerId LIMIT 1")
-    suspend fun getItemByNameAndPlayerId(itemName: String, playerId: Int): Item?
+    @Query("SELECT quantity FROM item_table WHERE name = :itemName")
+    fun getQuantityByName(itemName: String): LiveData<Int?>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertItem(item: Item)
 
-    @Query("UPDATE item_table SET quantity = quantity + :amount WHERE name = :itemName AND playerItemId = :playerId")
-    suspend fun addItemToInventory(playerId: Int, itemName: String, amount: Int)
+    @Query("UPDATE item_table SET quantity = quantity + :Quantity WHERE id =:Id")
+    suspend fun updateItemQuantityById(Id:Int, Quantity:Int)
 
-    @Query("UPDATE item_table SET quantity = quantity - :amount WHERE id = :itemId AND playerItemId = :playerId")
-    suspend fun removeItemFromInventory(playerId: Int, itemId: Int, amount: Int)
-
-    //----------- PLAYER WITH ITEM DAO -------------//
-
-    @Transaction // Importante per le relazioni
-    @Query("SELECT * FROM player_table WHERE id = :playerItemId")
-    suspend fun getPlayerWithItems(playerItemId: Int): PlayerWithItems
-
-    @Query("UPDATE item_table SET playerItemId = :playerId WHERE id = :itemId")
-    suspend fun assignItemToPlayer(itemId: Int, playerId: Int)
-
-    //----------- PLAYER WITH GALLERY DAO -------------//
-
-    @Transaction // Importante per le relazioni
-    @Query("SELECT * FROM player_table WHERE id = :playerGalleryId")
-    suspend fun getPlayerWithGallery(playerGalleryId: Int): PlayerWithGallery
 }

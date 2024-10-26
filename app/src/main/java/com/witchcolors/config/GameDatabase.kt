@@ -53,7 +53,7 @@ abstract class GameDatabase : RoomDatabase() {
         // Metodo per popolare il database con dati iniziali
         suspend fun populateDatabase(dao: GameDAO) {
             // Inserisci gli item dello shop senza un giocatore associato
-            dao.insertItem(Item(name = "Resurrection_Token", price = 100, quantity = 1))
+            dao.insertItem(Item(name = "Resurrection_Token", price = 100, quantity = 0))
             dao.insertPlayer(Player(id = 1, money = 1000, score = 0))
             // Aggiungi altri oggetti dello shop qui
         }
