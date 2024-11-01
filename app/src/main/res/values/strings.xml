@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Witch Colors</string>
+    <string name="background_image">Immagine di sfondo</string>
 </resources>

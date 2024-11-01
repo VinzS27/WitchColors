@@ -130,8 +130,8 @@ class GameActivity : AppCompatActivity() {
         if (selectedColor == targetColor) {
             score += 10
             money += 5
-            scoreText.text = "Punteggio: $score"
-            moneyText.text = "Soldi: $money"
+            scoreText.text = "$score"
+            moneyText.text = "$money"
             currentLevel++
 
             // potenziamento ogni 10 livelli
@@ -144,10 +144,10 @@ class GameActivity : AppCompatActivity() {
         } else {
             lives--
             if (lives <= 0) {
-                livesText.text = "Vite: $lives"
+                livesText.text = "$lives"
                 showGameOver()
             }else {
-                livesText.text = "Vite: $lives"
+                livesText.text = "$lives"
             }
         }
     }
@@ -234,7 +234,7 @@ class GameActivity : AppCompatActivity() {
         timer = object : CountDownTimer(timeLeft, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 timeLeft = millisUntilFinished
-                timerText.text = "Tempo: ${timeLeft / 1000}"
+                timerText.text = "${timeLeft / 1000}"
             }
 
             override fun onFinish() {
@@ -246,13 +246,13 @@ class GameActivity : AppCompatActivity() {
     private fun stopTimer() {
         timer?.cancel()
         timeLeft = 30000 // Reset del timer
-        timerText.text = "Tempo: ${timeLeft / 1000}"
+        timerText.text = "${timeLeft / 1000}"
     }
 
     private fun useReviveToken() {
         // Aggiungi una vita o resetta lo stato di gioco
         lives = 1
-        livesText.text = "Vite: $lives"
+        livesText.text = "$lives"
         ReviveStatus = true
 
         CoroutineScope(Dispatchers.IO).launch {

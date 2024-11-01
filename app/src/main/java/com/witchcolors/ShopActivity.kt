@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,8 +23,7 @@ import kotlinx.coroutines.launch
 class ShopActivity : AppCompatActivity() {
 
     private lateinit var moneyText: TextView
-    private lateinit var skinButton: Button
-    private lateinit var reviveButton: Button
+    private lateinit var reviveButton: ImageButton
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
     private lateinit var player: Player

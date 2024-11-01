@@ -1,14 +1,19 @@
 package com.witchcolors
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.witchcolors.DAO.GameDAO
 import com.witchcolors.config.GameDatabase
@@ -24,9 +29,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var scoreText: TextView
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
-    private lateinit var classicChallengeButton: Button
+    private lateinit var classicChallengeButton: ImageButton
     private lateinit var shopButton: Button
+    private lateinit var menu: ImageView
 
+    @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -77,9 +84,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun UpdateUI() {
         gameRep.money.observe(this) { moneyValue ->
-            moneyText.text = "Soldi: $moneyValue"}
+            moneyText.text = "$moneyValue"}
         gameRep.score.observe(this){ scoreValue ->
-            scoreText.text = "Score: $scoreValue"}
+            scoreText.text = "$scoreValue"}
     }
     // Aggiorna la UI quando si torna alla schermata principale
     override fun onResume() {

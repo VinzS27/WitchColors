@@ -2,73 +2,142 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@drawable/menu">
 
-    <TextView
-        android:id="@+id/money"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Soldi: 0"
-        android:textSize="20dp"
-        android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
-    <TextView
-        android:id="@+id/score"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Score: 0"
-        android:textSize="20dp"
-        android:layout_toRightOf="@+id/money"
-        android:layout_margin="16dp"/>
+        android:orientation="horizontal">
 
-    <!-- dp per il testo così resta sempre uguale da provare -->
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layout_dust"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/dust"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/dust" />
+
+            <TextView
+                android:id="@+id/money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:scaleType="centerCrop"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_score"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/image_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/score" />
+
+            <TextView
+                android:id="@+id/score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:scaleType="centerCrop"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/Setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/setting" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="The witch of colors"
-        android:textSize="24dp"
+        android:layout_below="@id/layout1"
+        android:orientation="horizontal"
+        android:layout_margin="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"/>
-    <Button
-        android:id="@+id/classicChallengeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sfida Classica"
-        android:layout_below="@id/title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"/>
-    <Button
-        android:id="@+id/Adventure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Avventura"
-        android:layout_below="@id/classicChallengeButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"/>
-    <Button
-        android:id="@+id/Gallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gallery"
-        android:layout_below="@id/Adventure"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"/>
-    <Button
-        android:id="@+id/shopButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Shop"
-        android:layout_below="@id/Gallery"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"/>
-    <Button
-        android:id="@+id/Setting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Impostazioni"
-        android:layout_below="@id/shopButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_centerInParent="true">
+
+        <LinearLayout
+            android:id="@+id/layout_challenge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageButton
+                android:id="@+id/classicChallengeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/background_image"
+                android:src="@drawable/challenge" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout3"
+        android:layout_below="@id/layout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/Gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="Gallery" />
+
+        <Button
+            android:id="@+id/shopButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/Gallery"
+            android:text="Shop" />
+    </LinearLayout>
 </RelativeLayout>

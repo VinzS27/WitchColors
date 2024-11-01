@@ -1,21 +1,87 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/menu">
 
-    <TextView
-        android:id="@+id/moneyTextView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/layout1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Soldi: 0"
-        android:textSize="18dp" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/reviveButton"
-        android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layout_dust"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/moneyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/dust" />
+
+            <TextView
+                android:id="@+id/money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:scaleType="centerCrop"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Gettone Rinascita: 100 Soldi"
-        android:layout_marginTop="20dp"/>
-</LinearLayout>
+        android:layout_below="@id/layout1"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/layout_token"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/reviveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/res_token"
+                android:text="Gettone Rinascita 100 Coin" />
+
+            <TextView
+                android:id="@+id/resTokenText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:background="@color/black"
+                android:scaleType="centerCrop"
+                android:text="Resurrection Token: 100 Coin"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
 
