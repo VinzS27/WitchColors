@@ -17,7 +17,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/moneyTextView"
+                android:id="@+id/money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -27,7 +27,7 @@
                 android:src="@drawable/dust" />
 
             <TextView
-                android:id="@+id/money"
+                android:id="@+id/moneyTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -52,7 +52,6 @@
             android:id="@+id/layout_token"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/black"
             android:layout_margin="20dp"
             android:gravity="center"
             android:orientation="horizontal">
@@ -74,7 +73,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:background="@color/black"
                 android:scaleType="centerCrop"
                 android:text="Resurrection Token: 100 Coin"
                 android:textColor="@color/white"

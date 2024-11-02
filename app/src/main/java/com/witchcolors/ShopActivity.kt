@@ -26,7 +26,6 @@ class ShopActivity : AppCompatActivity() {
     private lateinit var reviveButton: ImageButton
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
-    private lateinit var player: Player
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +74,7 @@ class ShopActivity : AppCompatActivity() {
 
     private fun UpdateUI() {
         gameRep.money.observe(this) { moneyValue ->
-            moneyText.text = "Soldi: $moneyValue"}
+            moneyText.text = "$moneyValue"}
     }
 
     private fun buyItems(itemName:String) {

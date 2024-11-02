@@ -21,7 +21,7 @@
                 android:id="@+id/dust"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:scaleType="centerCrop"
@@ -45,7 +45,7 @@
             android:id="@+id/layout_score"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="50dp"
+            android:layout_marginStart="50dp"
             android:orientation="horizontal">
 
             <ImageView
@@ -61,7 +61,7 @@
                 android:id="@+id/score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:scaleType="centerCrop"
@@ -92,10 +92,9 @@
                 android:id="@+id/timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
                 android:text="30"
                 android:textColor="@color/white"
@@ -124,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/heart" />
 
@@ -132,7 +131,7 @@
                 android:id="@+id/lives"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginBottom="20dp"
                 android:scaleType="centerCrop"
                 android:text="3"
@@ -156,7 +155,7 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:text="Trova il colore: Rosso"
             android:textColor="@color/white"
             android:textSize="25dp"
@@ -165,126 +164,21 @@
 
     <LinearLayout
         android:id="@+id/layout4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
         android:layout_below="@+id/layout3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="horizontal">
 
         <!-- Layout per gli oggetti colorati in griglia -->
         <GridLayout
             android:id="@+id/objectsLayout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/colorToFind"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="30dp"
+            android:layout_margin="20dp"
             android:background="@android:color/darker_gray"
             android:columnCount="3"
-            android:gravity="center"
-            android:rowCount="3">
-
-            <!-- Oggetto colorato 1 (rosso) -->
-            <ImageView
-                android:id="@+id/objectRed"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="@android:color/holo_red_dark"
-                android:contentDescription="Oggetto rosso" />
-
-            <!-- Oggetto colorato 2 (blu) -->
-            <ImageView
-                android:id="@+id/objectLightBlue"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="#77D3FD"
-                android:contentDescription="Oggetto celeste" />
-
-            <!-- Oggetto colorato 3 (verde) -->
-            <ImageView
-                android:id="@+id/objectGreen"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="@android:color/holo_green_dark"
-                android:contentDescription="Oggetto verde" />
-
-            <!-- Oggetto colorato 4 (giallo) -->
-            <ImageView
-                android:id="@+id/objectYellow"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="@android:color/holo_orange_light"
-                android:contentDescription="Oggetto giallo" />
-
-            <ImageView
-                android:id="@+id/objectWhite"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="@android:color/white"
-                android:contentDescription="Oggetto bianco" />
-
-            <!-- Oggetto colorato 6 (arancione) -->
-            <ImageView
-                android:id="@+id/objectOrange"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="#FF5722"
-                android:contentDescription="Oggetto arancione" />
-
-            <!-- Oggetto colorato 7 (viola) -->
-            <ImageView
-                android:id="@+id/objectPurple"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="#AE52D5"
-                android:contentDescription="Oggetto viola" />
-
-            <!-- Oggetto colorato 8 (rosa) -->
-            <ImageView
-                android:id="@+id/objectPink"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="#FFC0CB"
-                android:contentDescription="Oggetto rosa" />
-
-            <!-- Oggetto colorato 9 (grigio) -->
-            <ImageView
-                android:id="@+id/objectBlue"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="#122494"
-                android:contentDescription="Oggetto grigio" />
-
-            <ImageView
-                android:id="@+id/objectBlack"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="10dp"
-                android:background="@android:color/black"
-                android:contentDescription="Oggetto nero" />
+            android:rowCount="3"
+            android:layout_columnWeight="1">
         </GridLayout>
     </LinearLayout>
 

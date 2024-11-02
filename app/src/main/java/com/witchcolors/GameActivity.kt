@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import com.witchcolors.model.Item
+import com.witchcolors.utility.ColorsUtility
 import kotlinx.coroutines.cancel
 
 class GameActivity : AppCompatActivity() {
@@ -35,7 +36,7 @@ class GameActivity : AppCompatActivity() {
     private lateinit var objectsLayout: GridLayout
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
-    private lateinit var colors: List<String>
+    private lateinit var gameBoard: GameBoard
 
     private var score = 0
     private var lives = 3
@@ -46,6 +47,9 @@ class GameActivity : AppCompatActivity() {
     private var timeLeft: Long = 30000 // 60 seconds
     private var ReviveStatus: Boolean = false
     private var hasReviveToken: Boolean = false
+    private var rows: Int = 3
+    private var cols: Int = 6
+    private var emptyCell: Int = 9
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +64,8 @@ class GameActivity : AppCompatActivity() {
             val controller = window.insetsController
             if (controller != null) {
                 controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                controller.systemBarsBehavior =
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         } else {
             // Android <=10  (API < 30)
@@ -85,7 +90,9 @@ class GameActivity : AppCompatActivity() {
         moneyText = findViewById(R.id.money)
         timerText = findViewById(R.id.timer)
         objectsLayout = findViewById(R.id.objectsLayout)
-        colors = listOf("Rosso", "Blu", "Verde", "Giallo", "Rosa", "Nero", "Celeste", "Arancione", "Viola", "Bianco")
+
+        // Creazione della griglia di colori 3x3
+        gameBoard = GameBoard(rows, cols, emptyCell)
 
         //level start from 0
         startNewLevel()
@@ -101,29 +108,57 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    //***bloccare il tasto indietro***
     private fun startNewLevel() {
         if (lives <= 0) {
             showGameOver()
             return
         }
-        targetColor = colors.random() // Funzione per ottenere un nuovo colore
-        colorToFind.text = "Trova il colore: $targetColor"
-        setupObjects() // Funzione per impostare gli oggetti colorati
+        gameBoard.resetBoard()
+        val fullCells = gameBoard.getFullCells()
+        val (randomRow, randomCol) = fullCells.random()
 
+        targetColor = gameBoard.getColorAt(randomRow, randomCol)
+        colorToFind.text = "Trova il colore: $targetColor"
+
+        drawBoard()
         startTimer()
     }
 
-    private fun setupObjects() {
+    private fun drawBoard() {
         objectsLayout.removeAllViews()
-        for (color in colors) {
-            val colorView = Button(this)
-            colorView.text = color
-            colorView.setBackgroundColor(getColorFromName(color)) // Funzione per ottenere il colore
-            colorView.setOnClickListener {
-                checkColor(color)
+
+        for (i in 0 until rows) {
+            for (j in 0 until cols) {
+                val color = gameBoard.getColorAt(i, j)
+                if (color != "") {
+                    val colorView = Button(this)
+                    colorView.text = color
+                    colorView.setBackgroundColor(ColorsUtility.getColorFromName(color))
+
+                    val params = setParams()
+                    colorView.layoutParams = params
+
+                    colorView.setOnClickListener {
+                        checkColor(color)
+                    }
+                    objectsLayout.addView(colorView)
+                } else {
+                    val emptyView = View(this)
+                    emptyView.layoutParams = GridLayout.LayoutParams().apply {
+                        width = 100  // Imposta dimensioni per lo spazio vuoto
+                        height = 100
+                    }
+                    objectsLayout.addView(emptyView)
+                }
             }
-            objectsLayout.addView(colorView)
         }
+    }
+
+    private fun setParams(): GridLayout.LayoutParams {
+        val params = GridLayout.LayoutParams()
+        params.setMargins(25, 10, 30, 10) // Margine opzionale per distanziare i bottoni
+        return params
     }
 
     private fun checkColor(selectedColor: String) {
@@ -149,22 +184,6 @@ class GameActivity : AppCompatActivity() {
             }else {
                 livesText.text = "$lives"
             }
-        }
-    }
-
-    private fun getColorFromName(colorName: String): Int {
-        return when (colorName) {
-            "Rosso" -> Color.RED
-            "Blu" -> Color.BLUE
-            "Verde" -> Color.GREEN
-            "Giallo" -> Color.YELLOW
-            "Rosa" -> Color.parseColor("#FFC0CB")
-            "Bianco" -> Color.WHITE
-            "Viola" -> Color.parseColor("#AE52D5")
-            "Nero" -> Color.BLACK
-            "Celeste" -> Color.CYAN
-            "Arancione" -> Color.parseColor("#FF5722")
-            else -> Color.TRANSPARENT
         }
     }
 
@@ -201,7 +220,7 @@ class GameActivity : AppCompatActivity() {
         builder.setCancelable(false)
         builder.show()
 
-        UpdateMoneyScore()
+        updateMoneyScore()
     }
 
     private fun grantUpgrade() {
@@ -227,7 +246,7 @@ class GameActivity : AppCompatActivity() {
         builder.setCancelable(false)
         builder.show()
 
-        UpdateMoneyScore()
+        updateMoneyScore()
     }
 
     private fun startTimer() {
@@ -265,7 +284,7 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    private fun UpdateMoneyScore() {
+    private fun updateMoneyScore() {
         //aggiorna con i valori attuali deve fare moneycurrent + money
         CoroutineScope(Dispatchers.IO).launch {
             gameRep.updatePlayerMoneyScore(Id = 1, Money = money, Score = score )
