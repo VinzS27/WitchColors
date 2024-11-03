@@ -11,6 +11,7 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.Button
 import android.widget.GridLayout
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.foundation.Image
+import androidx.core.view.setPadding
 import androidx.lifecycle.LiveData
 import com.witchcolors.model.Item
 import com.witchcolors.utility.ColorsUtility
@@ -47,9 +50,9 @@ class GameActivity : AppCompatActivity() {
     private var timeLeft: Long = 30000 // 60 seconds
     private var ReviveStatus: Boolean = false
     private var hasReviveToken: Boolean = false
-    private var rows: Int = 3
-    private var cols: Int = 6
-    private var emptyCell: Int = 9
+    private var rows: Int = 5
+    private var cols: Int = 3
+    private var emptyCell: Int = 5
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,7 +94,7 @@ class GameActivity : AppCompatActivity() {
         timerText = findViewById(R.id.timer)
         objectsLayout = findViewById(R.id.objectsLayout)
 
-        // Creazione della griglia di colori 3x3
+        // Creazione della griglia di colori 3x3 con cella vuote
         gameBoard = GameBoard(rows, cols, emptyCell)
 
         //level start from 0
@@ -115,9 +118,10 @@ class GameActivity : AppCompatActivity() {
             return
         }
         gameBoard.resetBoard()
+
         val fullCells = gameBoard.getFullCells()
         val (randomRow, randomCol) = fullCells.random()
-
+        //così il target è sempre un cella piena
         targetColor = gameBoard.getColorAt(randomRow, randomCol)
         colorToFind.text = "Trova il colore: $targetColor"
 
@@ -127,27 +131,38 @@ class GameActivity : AppCompatActivity() {
 
     private fun drawBoard() {
         objectsLayout.removeAllViews()
+        var params = setParams()
 
         for (i in 0 until rows) {
             for (j in 0 until cols) {
                 val color = gameBoard.getColorAt(i, j)
-                if (color != "") {
-                    val colorView = Button(this)
-                    colorView.text = color
-                    colorView.setBackgroundColor(ColorsUtility.getColorFromName(color))
+                if (color != "") { //se la cella non è vuota
+                    val colorView = ImageButton(this)
+                    val objectType = gameBoard.getRandomObjects()
 
-                    val params = setParams()
+                    val drawableResource = ColorsUtility.getDrawableForObjectAndColor(objectType, color)
+                    if (drawableResource != null) {
+                        colorView.setImageResource(drawableResource)
+                        colorView.foreground = getDrawable(R.drawable.ripple_effect) // effetto al click
+
+                    }
+                    params = setParams()
                     colorView.layoutParams = params
+                    colorView.setBackgroundResource(R.drawable.sfondo256)
 
                     colorView.setOnClickListener {
                         checkColor(color)
                     }
                     objectsLayout.addView(colorView)
                 } else {
-                    val emptyView = View(this)
-                    emptyView.layoutParams = GridLayout.LayoutParams().apply {
-                        width = 100  // Imposta dimensioni per lo spazio vuoto
-                        height = 100
+                    val emptyView = ImageButton(this)
+                    emptyView.foreground = getDrawable(R.drawable.ripple_effect)
+                    params = setParams()
+                    emptyView.layoutParams = params
+                    emptyView.setBackgroundResource(R.drawable.sfondo256)
+
+                    emptyView.setOnClickListener {
+                        checkColor(color)
                     }
                     objectsLayout.addView(emptyView)
                 }
@@ -157,7 +172,9 @@ class GameActivity : AppCompatActivity() {
 
     private fun setParams(): GridLayout.LayoutParams {
         val params = GridLayout.LayoutParams()
-        params.setMargins(25, 10, 30, 10) // Margine opzionale per distanziare i bottoni
+        params.width = 256  // dimensioni spazio vuoto
+        params.height = 256
+        params.setMargins(5, 5, 5, 5)
         return params
     }
 

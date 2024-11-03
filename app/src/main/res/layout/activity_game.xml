@@ -162,7 +162,7 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout4"
         android:layout_below="@+id/layout3"
         android:layout_width="match_parent"
@@ -174,12 +174,12 @@
             android:id="@+id/objectsLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_margin="20dp"
-            android:background="@android:color/darker_gray"
+            android:background="@android:color/transparent"
+            android:rowCount="5"
             android:columnCount="3"
-            android:rowCount="3"
             android:layout_columnWeight="1">
         </GridLayout>
-    </LinearLayout>
-
+    </RelativeLayout>
 </RelativeLayout>

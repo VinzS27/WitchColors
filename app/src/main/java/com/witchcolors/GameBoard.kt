@@ -2,15 +2,18 @@ package com.witchcolors
 
 class GameBoard(private val rows: Int, private val cols: Int, private val emptyCellCount: Int) {
 
-    private val colors = listOf(
-        "Rosso", "Blu", "Verde", "Giallo", "Rosa", "Nero", "Celeste", "Arancione", "Viola", "Bianco"
-    )
+    private val objects = listOf("sfera","mela", "spada", "pozione","cappello","fungo")
+    private val colors = listOf("Rosso", "Giallo", "Verde","Celeste", "Blu", "Viola", "Arancione", "Rosa", "Nero", "Bianco")
 
-    // Griglia di colori casuali
+    // Griglia di celle vuote
     private val grid: Array<Array<String>> = Array(rows) { Array(cols) { "" } }
 
     fun getColorAt(row: Int, col: Int): String {
         return grid[row][col]
+    }
+
+    fun getRandomObjects(): String {
+        return objects.random()
     }
 
     fun resetBoard() {
@@ -22,7 +25,7 @@ class GameBoard(private val rows: Int, private val cols: Int, private val emptyC
             emptyCells.add(randomCell)
         }
 
-        // Prende colori unici per celle non vuote
+        // Aggiungi colori unici per celle non vuote
         val nonEmptyCellCount = totalCells - emptyCellCount
         val selectedColors = colors.shuffled().take(nonEmptyCellCount)
 
@@ -41,14 +44,15 @@ class GameBoard(private val rows: Int, private val cols: Int, private val emptyC
 
     // Restituisce una lista di coordinate di celle piene
     fun getFullCells(): List<Pair<Int, Int>> {
-        val nonEmptyCells = mutableListOf<Pair<Int, Int>>()
+        val fullCells = mutableListOf<Pair<Int, Int>>()
         for (i in 0 until rows) {
             for (j in 0 until cols) {
                 if (grid[i][j] != "") {
-                    nonEmptyCells.add(Pair(i, j))
+                    fullCells.add(Pair(i, j))
                 }
             }
         }
-        return nonEmptyCells
+        return fullCells
     }
+
 }
