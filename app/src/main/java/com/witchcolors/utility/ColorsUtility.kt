@@ -6,7 +6,7 @@ import com.witchcolors.R
 object ColorsUtility {
 
     val drawableMap = mapOf(
-        "sfera" to mapOf(
+        /*"sfera" to mapOf(
             "rosso" to R.drawable.sfera_rosso,
             "verde" to R.drawable.sfera_verde,
             "giallo" to R.drawable.sfera_giallo,
@@ -53,7 +53,7 @@ object ColorsUtility {
             "nero" to R.drawable.pozione_nero,
             "rosa" to R.drawable.pozione_rosa,
             "bianco" to R.drawable.pozione_bianco
-        ),
+        ),*/
         "cappello" to mapOf(
             "rosso" to R.drawable.cappello_rosso,
             "verde" to R.drawable.cappello_verde,
@@ -65,7 +65,7 @@ object ColorsUtility {
             "nero" to R.drawable.cappello_nero,
             "rosa" to R.drawable.cappello_rosa,
             "bianco" to R.drawable.cappello_bianco
-        ),
+        )/*,
         "fungo" to mapOf(
             "rosso" to R.drawable.fungo_rosso,
             "verde" to R.drawable.fungo_verde,
@@ -77,7 +77,7 @@ object ColorsUtility {
             "nero" to R.drawable.fungo_nero,
             "rosa" to R.drawable.fungo_rosa,
             "bianco" to R.drawable.fungo_bianco
-        )
+        )*/
     )
 
     private val colorMap = mapOf(

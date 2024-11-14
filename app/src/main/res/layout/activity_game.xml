@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/menu">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:background="@color/black">
 
         <LinearLayout
             android:id="@+id/layout_dust"
@@ -103,6 +103,13 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/menu_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout1"
+        android:background="@drawable/menu"/>
+
     <LinearLayout
         android:id="@+id/layout2"
         android:layout_width="match_parent"
@@ -124,6 +131,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/heart" />
 
@@ -133,6 +141,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginBottom="20dp"
+                android:layout_marginTop="10dp"
                 android:scaleType="centerCrop"
                 android:text="3"
                 android:textColor="@color/white"
@@ -156,9 +165,10 @@
             android:gravity="center"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Trova il colore: Rosso"
-            android:textColor="@color/white"
-            android:textSize="25dp"
+            android:text="Trova il colore Rosso"
+            android:textColor="@color/black"
+            android:background="@drawable/text_background"
+            android:textSize="20dp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -166,7 +176,7 @@
         android:id="@+id/layout4"
         android:layout_below="@+id/layout3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <!-- Layout per gli oggetti colorati in griglia -->
@@ -177,9 +187,54 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="20dp"
             android:background="@android:color/transparent"
-            android:rowCount="5"
-            android:columnCount="3"
+            android:rowCount="3"
+            android:columnCount="4"
             android:layout_columnWeight="1">
         </GridLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout4"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center|bottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@color/black">
+
+        <ImageButton
+            android:id="@+id/powerScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/button_potion_grey"
+            android:foreground="@drawable/ripple_effect"/>
+
+        <ImageButton
+            android:id="@+id/powerPoison"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/button_potion_grey"
+            android:foreground="@drawable/ripple_effect"/>
+        <ImageButton
+            android:id="@+id/powerIce"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/button_potion_grey"
+            android:foreground="@drawable/ripple_effect"/>
+        </LinearLayout>
+    </LinearLayout>
+
 </RelativeLayout>

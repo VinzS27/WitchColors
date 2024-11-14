@@ -1,12 +1,13 @@
 package com.witchcolors
 
-class GameBoard(private val rows: Int, private val cols: Int, private val emptyCellCount: Int) {
+class GameBoard(private val rows: Int, private val cols: Int, private var emptyCellCount: Int) {
 
-    private val objects = listOf("sfera","mela", "spada", "pozione","cappello","fungo")
+    private val objects = listOf(/*"sfera","mela", "spada", "pozione",*/"cappello"/*,"fungo"*/)
     private val colors = listOf("Rosso", "Giallo", "Verde","Celeste", "Blu", "Viola", "Arancione", "Rosa", "Nero", "Bianco")
+    private val powerups = listOf("Veleno", "Gelo", "Double_Score","Magic_Dust", "ExtraLife")
 
     // Griglia di celle vuote
-    private val grid: Array<Array<String>> = Array(rows) { Array(cols) { "" } }
+    private var grid: Array<Array<String>> = Array(rows) { Array(cols) { "" } }
 
     fun getColorAt(row: Int, col: Int): String {
         return grid[row][col]
@@ -14,6 +15,27 @@ class GameBoard(private val rows: Int, private val cols: Int, private val emptyC
 
     fun getRandomObjects(): String {
         return objects.random()
+    }
+
+    fun getRandomPower(): String {
+        return powerups.random()
+    }
+
+    // Restituisce una lista di coordinate di celle piene
+    fun getFullCells(): List<Pair<Int, Int>> {
+        val fullCells = mutableListOf<Pair<Int, Int>>()
+        for (i in 0 until rows) {
+            for (j in 0 until cols) {
+                if (grid[i][j] != "") {
+                    fullCells.add(Pair(i, j))
+                }
+            }
+        }
+        return fullCells
+    }
+
+    fun updateEmptyCells(cells:Int){
+        emptyCellCount-=cells
     }
 
     fun resetBoard() {
@@ -29,6 +51,7 @@ class GameBoard(private val rows: Int, private val cols: Int, private val emptyC
         val nonEmptyCellCount = totalCells - emptyCellCount
         val selectedColors = colors.shuffled().take(nonEmptyCellCount)
 
+        grid = Array(rows) { Array(cols) { "" } }
         var colorIndex = 0
         for (i in 0 until rows) {
             for (j in 0 until cols) {
@@ -42,17 +65,5 @@ class GameBoard(private val rows: Int, private val cols: Int, private val emptyC
         }
     }
 
-    // Restituisce una lista di coordinate di celle piene
-    fun getFullCells(): List<Pair<Int, Int>> {
-        val fullCells = mutableListOf<Pair<Int, Int>>()
-        for (i in 0 until rows) {
-            for (j in 0 until cols) {
-                if (grid[i][j] != "") {
-                    fullCells.add(Pair(i, j))
-                }
-            }
-        }
-        return fullCells
-    }
 
 }

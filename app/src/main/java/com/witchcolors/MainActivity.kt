@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
     private lateinit var classicChallengeButton: ImageButton
-    private lateinit var shopButton: Button
+    private lateinit var shopButton: ImageButton
     private lateinit var menu: ImageView
 
     @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
