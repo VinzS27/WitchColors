@@ -154,7 +154,7 @@
     <LinearLayout
         android:id="@+id/layout3"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/layout2"
         android:layout_alignParentBottom="true"
         android:gravity="center">
@@ -164,7 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:background="@android:color/transparent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:foreground="@drawable/ripple_effect"
             android:src="@drawable/button_gallery" />
 
@@ -173,7 +173,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:background="@android:color/transparent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:foreground="@drawable/ripple_effect"
             android:src="@drawable/button_shop" />
 
@@ -182,7 +182,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:background="@android:color/transparent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:foreground="@drawable/ripple_effect"
             android:src="@drawable/button_stats" />
     </LinearLayout>

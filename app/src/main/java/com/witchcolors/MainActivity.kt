@@ -4,24 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.Button
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.lifecycle.LiveData
 import com.witchcolors.DAO.GameDAO
 import com.witchcolors.config.GameDatabase
-import com.witchcolors.model.Player
 import com.witchcolors.repository.GameRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,11 +20,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var scoreText: TextView
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
-    private lateinit var classicChallengeButton: ImageButton
+    private lateinit var worldsButton: ImageButton
     private lateinit var shopButton: ImageButton
-    private lateinit var menu: ImageView
 
-    @SuppressLint("MissingInflatedId", "ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -60,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Init variable
-        classicChallengeButton = findViewById(R.id.classicChallengeButton)
+        worldsButton = findViewById(R.id.classicChallengeButton)
         shopButton = findViewById(R.id.shopButton)
         moneyText = findViewById(R.id.money)
         scoreText = findViewById(R.id.score)
@@ -71,8 +60,8 @@ class MainActivity : AppCompatActivity() {
 
         UpdateUI()
 
-        classicChallengeButton.setOnClickListener {
-            val intent = Intent(this, GameActivity::class.java)
+        worldsButton.setOnClickListener {
+            val intent = Intent(this, WorldsActivity::class.java)
             startActivity(intent)
         }
 

@@ -1,14 +1,15 @@
 package com.witchcolors
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
+import android.view.animation.AnimationUtils
 import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.TextView
@@ -33,29 +34,33 @@ class GameActivity : AppCompatActivity() {
     private lateinit var livesText: TextView
     private lateinit var moneyText: TextView
     private lateinit var timerText: TextView
+    private lateinit var levelsText: TextView
     private lateinit var potionScoreButton: ImageButton
     private lateinit var potionPoisonButton: ImageButton
     private lateinit var potionFreezeButton: ImageButton
     private lateinit var objectsLayout: GridLayout
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
-    private lateinit var gameBoard: GameBoard
+    private lateinit var gameGrid: GameGrid
 
     private var score = 0
     private var lives = 3
     private var money = 0
     private var currentLevel = 0
+    private var level = 0
+    private var worldIndex = 0
     private var swapJob: Job? = null // Job per gestire il timer di scambio
+    private val bombAnimationJobs = mutableListOf<Job>()
+    private val activeBombButtons = mutableListOf<ImageButton>()
     private var targetColor: String = ""
     private var timer: CountDownTimer? = null
-    private var timeLeft: Long = 20000 // 60 seconds
-    private var timeDifficulty: Long = 0
+    private var timeLeft: Long = 0
     private var ReviveStatus: Boolean = false
     private var hasReviveToken: Boolean = false
     private var hasPoisonPotion: Boolean = false
     private var hasFreezePotion: Boolean = false
     private var hasDoubleScorePotion: Boolean = false
-    private var rows: Int = 5
+    private var rows: Int = 5 //TODO diminuire dimensioni img
     private var cols: Int = 4
     private var emptyCell: Int = 16
 
@@ -75,7 +80,7 @@ class GameActivity : AppCompatActivity() {
                 controller.systemBarsBehavior =
                     WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-        }else{
+        } else {
             // Android <=10  (API < 30)
             window.decorView.systemUiVisibility = (
                     View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -97,6 +102,7 @@ class GameActivity : AppCompatActivity() {
         livesText = findViewById(R.id.lives)
         moneyText = findViewById(R.id.money)
         timerText = findViewById(R.id.timer)
+        levelsText = findViewById(R.id.levels)
         objectsLayout = findViewById(R.id.objectsLayout)
         potionScoreButton = findViewById(R.id.powerScore)
         potionFreezeButton = findViewById(R.id.powerIce)
@@ -120,39 +126,49 @@ class GameActivity : AppCompatActivity() {
             }
         }
 
-        // Creazione della griglia di colori 3x4 con 7 celle vuote
-        gameBoard = GameBoard(rows, cols, emptyCell)
+        //Get current world and current level for settings
+        worldIndex = intent.getIntExtra("worldIndex", 0)
+        level = intent.getIntExtra("level", 1)
 
-        //level start from 0
-        startNewLevel()
+        // Setting colors grid
+        gameGrid = GameGrid(rows, cols, emptyCell, level, worldIndex)
+        timeLeft = gameGrid.getInitialTimer()
 
-        //Check if player have the revive token and potions
+
+        // Check if player has the revive token and potions
         CoroutineScope(Dispatchers.IO).launch {
-            val item: Item? = gameDAO.getItemByName(itemName = "Resurrection_Token")
-            /*val itemPoison: Item? = gameDAO.getItemByName(itemName = "Poison_Potion")
-            val itemFreeze: Item? = gameDAO.getItemByName(itemName = "Freeze_Potion")
-            val itemDoubleScore: Item? = gameDAO.getItemByName(itemName = "DoubleScore_Potion")**/
-            if (item != null) {
-                if (item.quantity > 0) {
-                    hasReviveToken = true
+            val itemsToCheck = mapOf(
+                "Resurrection_Token" to { hasReviveToken = true },
+                "Veleno" to { activatePoison() },
+                "Gelo" to { activateFreeze() },
+                "Double_Score" to { activateDoubleScore() }
+            )
+
+            itemsToCheck.forEach { (itemName, action) ->
+                val item = gameDAO.getItemByName(itemName)
+                if (item != null && item.quantity > 0) {
+                    action.invoke() // Esegui l'azione associata
                 }
             }
         }
+
+        //level start from 0
+        startNewLevel() //TODO mettere un caricamento prima di cominciare il livello
     }
 
-    //***bloccare il tasto indietro***
     private fun startNewLevel() {
         if (lives <= 0) {
             showGameOver()
             return
         }
-        gameBoard.resetBoard()
+        gameGrid.resetBoard()
 
-        val fullCells = gameBoard.getFullCells()
+        val fullCells = gameGrid.getFullCells()
         val (randomRow, randomCol) = fullCells.random()
         //così il target è sempre una cella piena
-        targetColor = gameBoard.getColorAt(randomRow, randomCol)
+        targetColor = gameGrid.getColorAt(randomRow, randomCol)
         colorToFind.text = "Trova il colore $targetColor"
+        levelsText.text = "$currentLevel/$level"
 
         drawGrid()
         increaseDifficulty()
@@ -161,15 +177,14 @@ class GameActivity : AppCompatActivity() {
 
     private fun increaseDifficulty() {
         // Attiva gli scambi automatici per i livelli 5 e successivi
-        if (currentLevel >= 5 ) {
-            //timeDifficulty=5000
+        if (currentLevel >= 5) {
             startAutomaticSwaps()
         } else {
             stopAutomaticSwaps()
         }
 
         //testo di colore random
-        if (currentLevel >= 10 ) {
+        if (currentLevel >= 10) {
             val randomColorName = ColorsUtility.getRandomColorName()
             colorToFind.setTextColor(ColorsUtility.getColorFromName(randomColorName))
         }
@@ -245,6 +260,39 @@ class GameActivity : AppCompatActivity() {
         }.start()
     }
 
+    private fun animateBomb(button: ImageButton) {
+        activeBombButtons.add(button) // Aggiungi il bottone alla lista delle bombe attive
+        val job = CoroutineScope(Dispatchers.Main).launch {
+            repeat(5) { // Lampeggia 5 volte
+                button.alpha = if (button.alpha == 1f) 0.5f else 1f
+                delay(1000)
+            }
+            effectBomb() // Attiva l'effetto bomba dopo l'animazione
+        }
+        bombAnimationJobs.add(job) // Aggiungi il Job alla lista
+    }
+
+    private fun stopBombAnimation() {
+        bombAnimationJobs.forEach { it.cancel() } // Cancella ogni Job attivo
+        bombAnimationJobs.clear() // Svuota la lista
+
+        // Disabilita tutti i bottoni delle bombe
+        activeBombButtons.forEach { button ->
+            button.alpha = 1f
+            button.setImageDrawable(null)
+            button.isEnabled = false
+        }
+        activeBombButtons.clear() // Svuota la lista dei bottoni
+    }
+
+    private fun effectBomb() {
+        stopBombAnimation()
+        MediaPlayer.create(this, R.raw.explosion).start()
+        val shakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake)
+        objectsLayout.startAnimation(shakeAnimation)
+        checkColor("bomba")
+    }
+
     // Recupera il bottone nella posizione specifica del layout della griglia
     private fun getButtonAt(row: Int, col: Int): ImageButton? {
         val index = row * cols + col //ottengo sempre un buttone dentro la griglia
@@ -258,16 +306,16 @@ class GameActivity : AppCompatActivity() {
 
         for (i in 0 until rows) {
             for (j in 0 until cols) {
-                val color = gameBoard.getColorAt(i, j)
+                val color = gameGrid.getColorAt(i, j)
                 if (color != "") { //se la cella non è vuota
                     val colorView = ImageButton(this)
-                    val objectType = gameBoard.getRandomObjects()
+                    val objectType = gameGrid.getRandomObjects()
 
-                    val drawableResource = ColorsUtility.getDrawableForObjectAndColor(objectType, color)
+                    val drawableResource =
+                        ColorsUtility.getDrawableForObjectAndColor(objectType, color)
                     if (drawableResource != null) {
                         colorView.setImageResource(drawableResource)
                         colorView.foreground = getDrawable(R.drawable.ripple_effect) // effetto al click
-
                     }
                     params = setGridParams()
                     colorView.layoutParams = params
@@ -277,16 +325,27 @@ class GameActivity : AppCompatActivity() {
                         checkColor(color)
                     }
                     objectsLayout.addView(colorView)
+
                 } else {
                     val emptyView = ImageButton(this)
                     emptyView.foreground = getDrawable(R.drawable.ripple_effect)
+                    //cella bomba
+                    if ((1..100).random() <= gameGrid.getBombProbability()) {
+                        ColorsUtility.getSpecialDrawableForObjectAndColor("bomba", targetColor)
+                            ?.let { emptyView.setImageResource(it) }
+                        animateBomb(emptyView)
+                        emptyView.setOnClickListener {
+                            effectBomb()
+                        }
+                    //cella vuota
+                    } else {
+                        emptyView.setOnClickListener {
+                            checkColor(color)
+                        }
+                    }
                     params = setGridParams()
                     emptyView.layoutParams = params
                     emptyView.setBackgroundResource(R.drawable.sfondo192)
-
-                    emptyView.setOnClickListener {
-                        checkColor(color)
-                    }
                     objectsLayout.addView(emptyView)
                 }
             }
@@ -303,39 +362,34 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun checkColor(selectedColor: String) {
+        stopBombAnimation()
         if (selectedColor == targetColor) {
-            updateUI(5,10,0)
+            updateUI(5, 10, 0)
             currentLevel++
+            stopTimer()
+            stopAutomaticSwaps()
 
             // evento ogni 10 livelli
             if (currentLevel % 10 == 0) {
-                gameBoard.updateEmptyCells(2) //aumenta gli oggetti di 2
-                timeDifficulty=500*currentLevel.toLong()
+                gameGrid.updateEmptyCells(2) //aumenta gli oggetti di 2
+                timeLeft = gameGrid.reduceTime(2000, timeLeft)
                 grantPowerUp() //ottiene un potenziamento
-            }else{
-                showVictory()
+            } else {
+                startNewLevel()
             }
-        }else{
-            lives--
+        } else {
+            updateUI(0, 0, -1)
             if (lives <= 0) {
-                livesText.text = "$lives"
+                livesText.text = "0"
                 showGameOver()
-            }else {
-                livesText.text = "$lives"
             }
         }
-    }
-
-    private fun showVictory() {
-        //aggiungere un qualcosa che fa capire che hai vinto
-        stopTimer()
-        stopAutomaticSwaps()
-        startNewLevel()
     }
 
     private fun showGameOver() {
         stopTimer()
         stopAutomaticSwaps()
+        stopBombAnimation()
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Game Over")
@@ -365,39 +419,36 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun grantPowerUp() {
-        stopTimer()
-        stopAutomaticSwaps()
-        if(currentLevel >= 40) {
+        if (currentLevel >= level * 10) {
             finish()
+        }else{
+            val randomPowerup = gameGrid.getRandomPower()
+            when (randomPowerup) {
+                "Veleno" -> activatePoison()
+                "Gelo" -> activateFreeze()
+                "Double_Score" -> activateDoubleScore()
+                "Magic_Dust" -> updateUI(100, 0, 0)
+                "ExtraLife" -> updateUI(0, 0, 1)
+            }
+
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Bonus Raggiunto!")
+            builder.setMessage("Hai ricevuto: $randomPowerup")
+
+            builder.setPositiveButton("Avanti") { dialog, which ->
+                dialog.dismiss()
+                startNewLevel()
+            }
+            builder.setNegativeButton("Torna al Menu") { dialog, which ->
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+            // Impedisce la chiusura
+            builder.setCancelable(false)
+            builder.show()
         }
-
-        val randomPowerup = gameBoard.getRandomPower()
-        when (randomPowerup) {
-            "Veleno" -> activatePoison()
-            "Gelo" -> activateFreeze()
-            "Double_Score" -> activateDoubleScore()
-            "Magic_Dust" -> updateUI(100,0,0)
-            "ExtraLife" -> updateUI(0,0,1)
-        }
-
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Bonus Raggiunto!")
-        builder.setMessage("Hai ricevuto: $randomPowerup")
-
-        builder.setPositiveButton("Avanti") { dialog, which ->
-            dialog.dismiss()
-            startNewLevel()
-        }
-        builder.setNegativeButton("Torna al Menu") { dialog, which ->
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        // Impedisce la chiusura
-        builder.setCancelable(false)
-        builder.show()
-
         updateMoneyScore()
     }
 
@@ -416,7 +467,6 @@ class GameActivity : AppCompatActivity() {
 
     private fun stopTimer() {
         timer?.cancel()
-        timeLeft = 20000 - timeDifficulty // Reset del timer
         timerText.text = "${timeLeft / 1000}"
     }
 
@@ -428,9 +478,9 @@ class GameActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val item: Item? = gameDAO.getItemByName(itemName = "Resurrection_Token")
-            if(item != null) {
-                if((item.quantity > 0) == true) {
-                    gameRep.updateItemQuantityById(Id=item.id,Quantity=-1)
+            if (item != null) {
+                if ((item.quantity > 0) == true) {
+                    gameRep.updateItemQuantityById(Id = item.id, Quantity = -1)
                 }
             }
         }
@@ -439,7 +489,7 @@ class GameActivity : AppCompatActivity() {
     private fun updateMoneyScore() {
         //aggiorna con i valori attuali deve fare moneycurrent + money
         CoroutineScope(Dispatchers.IO).launch {
-            gameRep.updatePlayerMoneyScore(Id = 1, Money = money, Score = score )
+            gameRep.updatePlayerMoneyScore(Id = 1, Money = money, Score = score)
         }
     }
 
@@ -460,6 +510,19 @@ class GameActivity : AppCompatActivity() {
     private fun useFreezeEffect() {
         hasFreezePotion = false
         potionFreezeButton.setImageResource(R.drawable.button_potion_grey)
+
+        stopTimer()
+        stopAutomaticSwaps()
+        stopBombAnimation()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val item: Item? = gameDAO.getItemByName(itemName = "Gelo")
+            if (item != null) {
+                if ((item.quantity > 0) == true) {
+                    gameRep.updateItemQuantityById(Id = item.id, Quantity = -1)
+                }
+            }
+        }
     }
 
     private fun activateDoubleScore() {
@@ -470,6 +533,15 @@ class GameActivity : AppCompatActivity() {
     private fun useDoubleScoreEffect() {
         hasDoubleScorePotion = false
         potionScoreButton.setImageResource(R.drawable.button_potion_grey)
+        updateUI(0, score, 0)
+        CoroutineScope(Dispatchers.IO).launch {
+            val item: Item? = gameDAO.getItemByName(itemName = "Double_Score")
+            if (item != null) {
+                if ((item.quantity > 0) == true) {
+                    gameRep.updateItemQuantityById(Id = item.id, Quantity = -1)
+                }
+            }
+        }
     }
 
     private fun activatePoison() {
@@ -480,6 +552,15 @@ class GameActivity : AppCompatActivity() {
     private fun usePoisonEffect() {
         hasPoisonPotion = false
         potionPoisonButton.setImageResource(R.drawable.button_potion_grey)
+        checkColor(targetColor)
+        CoroutineScope(Dispatchers.IO).launch {
+            val item: Item? = gameDAO.getItemByName(itemName = "Veleno")
+            if (item != null) {
+                if ((item.quantity > 0) == true) {
+                    gameRep.updateItemQuantityById(Id = item.id, Quantity = -1)
+                }
+            }
+        }
     }
 
     // Ferma il timer in caso di chiusura dell'attività
@@ -498,7 +579,8 @@ class GameActivity : AppCompatActivity() {
                 val controller = window.insetsController
                 if (controller != null) {
                     controller.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                    controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    controller.systemBarsBehavior =
+                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 }
             } else {
                 window.decorView.systemUiVisibility = (

@@ -5,8 +5,8 @@ import com.witchcolors.R
 
 object ColorsUtility {
 
-    val drawableMap = mapOf(
-        /*"sfera" to mapOf(
+    private val drawableMap = mapOf(
+        "sfera" to mapOf(
             "rosso" to R.drawable.sfera_rosso,
             "verde" to R.drawable.sfera_verde,
             "giallo" to R.drawable.sfera_giallo,
@@ -53,7 +53,7 @@ object ColorsUtility {
             "nero" to R.drawable.pozione_nero,
             "rosa" to R.drawable.pozione_rosa,
             "bianco" to R.drawable.pozione_bianco
-        ),*/
+        ),
         "cappello" to mapOf(
             "rosso" to R.drawable.cappello_rosso,
             "verde" to R.drawable.cappello_verde,
@@ -65,7 +65,7 @@ object ColorsUtility {
             "nero" to R.drawable.cappello_nero,
             "rosa" to R.drawable.cappello_rosa,
             "bianco" to R.drawable.cappello_bianco
-        )/*,
+        ),
         "fungo" to mapOf(
             "rosso" to R.drawable.fungo_rosso,
             "verde" to R.drawable.fungo_verde,
@@ -77,7 +77,7 @@ object ColorsUtility {
             "nero" to R.drawable.fungo_nero,
             "rosa" to R.drawable.fungo_rosa,
             "bianco" to R.drawable.fungo_bianco
-        )*/
+        )
     )
 
     private val colorMap = mapOf(
@@ -93,8 +93,27 @@ object ColorsUtility {
         "Bianco" to Color.WHITE
     )
 
+    private val specialDrawableMap = mapOf(
+        "bomba" to mapOf(
+            "rosso" to R.drawable.bomba_rosso,
+            "verde" to R.drawable.bomba_verde,
+            "giallo" to R.drawable.bomba_giallo,
+            "celeste" to R.drawable.bomba_celeste,
+            "blu" to R.drawable.bomba_blu,
+            "viola" to R.drawable.bomba_viola,
+            "arancione" to R.drawable.bomba_arancione,
+            "nero" to R.drawable.bomba_nero,
+            "rosa" to R.drawable.bomba_rosa,
+            "bianco" to R.drawable.bomba_bianco
+        )
+    )
+
     fun getDrawableForObjectAndColor(objectType: String, colorName: String): Int? {
         return drawableMap[objectType]?.get(colorName.lowercase())
+    }
+
+    fun getSpecialDrawableForObjectAndColor(objectType: String, colorName: String): Int? {
+        return specialDrawableMap[objectType]?.get(colorName.lowercase())
     }
 
     fun getColorFromName(colorName: String): Int {

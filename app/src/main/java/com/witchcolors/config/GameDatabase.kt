@@ -54,7 +54,10 @@ abstract class GameDatabase : RoomDatabase() {
         suspend fun populateDatabase(dao: GameDAO) {
             // Inserisci gli item dello shop senza un giocatore associato
             dao.insertItem(Item(name = "Resurrection_Token", price = 100, quantity = 0))
-            dao.insertPlayer(Player(id = 1, money = 1000, score = 0))
+            dao.insertItem(Item(name = "Gelo", price = 100, quantity = 0))
+            dao.insertItem(Item(name = "Veleno", price = 100, quantity = 0))
+            dao.insertItem(Item(name = "Double_Score", price = 100, quantity = 0))
+            dao.insertPlayer(Player(id = 1, money = 10000, score = 0))
             // Aggiungi altri oggetti dello shop qui
         }
     }

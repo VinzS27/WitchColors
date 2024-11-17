@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/shop">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/black">
 
         <LinearLayout
             android:id="@+id/layout_dust"
@@ -41,6 +41,13 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/menu_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/layout1"
+        android:background="@drawable/shop"/>
+
     <LinearLayout
         android:id="@+id/layout2"
         android:layout_width="match_parent"
@@ -53,21 +60,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
+            android:background="@color/black"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:background="@color/black">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/reviveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:background="@android:color/transparent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/res_token"
-                android:text="Gettone Rinascita 100 Coin" />
+                android:src="@drawable/res_token"/>
 
             <TextView
                 android:id="@+id/resTokenText"
@@ -75,11 +81,135 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:scaleType="centerCrop"
-                android:text="Resurrection Token: 100 Coin"
+                android:text="100 Coin"
                 android:textColor="@color/white"
                 android:textSize="16dp"
                 android:textStyle="bold" />
         </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout2"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/layout_poisonPotion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:background="@color/black">
+
+            <ImageButton
+                android:id="@+id/poisonPotionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/button_potion_poison" />
+
+            <TextView
+                android:id="@+id/poisonPotionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:scaleType="centerCrop"
+                android:text="100 Coin"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout3"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/layout_icePotion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:background="@color/black">
+
+            <ImageButton
+                android:id="@+id/icePotionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/button_potion_ice" />
+
+            <TextView
+                android:id="@+id/icePotionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:scaleType="centerCrop"
+                android:text="100 Coin"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout4"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/layout_scorePotion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:background="@color/black">
+
+            <ImageButton
+                android:id="@+id/scorePotionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/button_potion_score" />
+
+            <TextView
+                android:id="@+id/scorePotionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:scaleType="centerCrop"
+                android:text="100 Coin"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

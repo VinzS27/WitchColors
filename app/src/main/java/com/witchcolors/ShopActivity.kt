@@ -1,5 +1,6 @@
 package com.witchcolors
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -24,9 +25,13 @@ class ShopActivity : AppCompatActivity() {
 
     private lateinit var moneyText: TextView
     private lateinit var reviveButton: ImageButton
+    private lateinit var scoreButton: ImageButton
+    private lateinit var poisonButton: ImageButton
+    private lateinit var iceButton: ImageButton
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop)
@@ -53,6 +58,9 @@ class ShopActivity : AppCompatActivity() {
         //init variable
         moneyText = findViewById(R.id.moneyTextView)
         reviveButton = findViewById(R.id.reviveButton)
+        iceButton = findViewById(R.id.icePotionButton)
+        poisonButton = findViewById(R.id.poisonPotionButton)
+        scoreButton = findViewById(R.id.scorePotionButton)
 
         //Get player from db
         gameDAO = GameDatabase.getDatabase(application).gameDao()
@@ -61,8 +69,20 @@ class ShopActivity : AppCompatActivity() {
         UpdateUI()
 
         reviveButton.setOnClickListener {
-            val reviveToken = "Resurrection_Token"
-            buyItems(reviveToken)
+            val item = "Resurrection_Token"
+            buyItems(item)
+        }
+        iceButton.setOnClickListener {
+            val item = "Gelo"
+            buyItems(item)
+        }
+        poisonButton.setOnClickListener {
+            val item = "Veleno"
+            buyItems(item)
+        }
+        scoreButton.setOnClickListener {
+            val item = "Double_Score"
+            buyItems(item)
         }
     }
 

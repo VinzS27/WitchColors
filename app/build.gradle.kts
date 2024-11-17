@@ -72,6 +72,9 @@ dependencies {
     implementation(libs.androidx.room.compiler.v261)
     implementation(libs.androidx.room.runtime.v261)
     implementation(libs.androidx.room.ktx.v261)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
     androidTestImplementation (libs.androidx.room.testing)
 
     //DataBinding

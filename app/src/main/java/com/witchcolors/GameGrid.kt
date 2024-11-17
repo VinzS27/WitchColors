@@ -1,8 +1,9 @@
 package com.witchcolors
 
-class GameBoard(private val rows: Int, private val cols: Int, private var emptyCellCount: Int) {
+class GameGrid(private val rows: Int, private val cols: Int, private var emptyCellCount: Int,
+               private var level: Int, private var worldIndex: Int) {
 
-    private val objects = listOf(/*"sfera","mela", "spada", "pozione",*/"cappello"/*,"fungo"*/)
+    private val objects = listOf("sfera","mela", "spada", "pozione","cappello","fungo")
     private val colors = listOf("Rosso", "Giallo", "Verde","Celeste", "Blu", "Viola", "Arancione", "Rosa", "Nero", "Bianco")
     private val powerups = listOf("Veleno", "Gelo", "Double_Score","Magic_Dust", "ExtraLife")
 
@@ -32,6 +33,15 @@ class GameBoard(private val rows: Int, private val cols: Int, private var emptyC
             }
         }
         return fullCells
+    }
+
+    fun getBombProbability(): Int {
+        return when (level) {
+            0, 1, 2 -> 0       // Nessuna bomba nei primi due livelli
+            3 -> 2             // 5% di probabilità al livello 3
+            4, 5 -> 5         // 10% di probabilità ai livelli 4 e 5
+            else -> 0
+        }
     }
 
     fun updateEmptyCells(cells:Int){
@@ -65,5 +75,13 @@ class GameBoard(private val rows: Int, private val cols: Int, private var emptyC
         }
     }
 
+    fun getInitialTimer(): Long {
+        return 10000L + (level * 10000L)
+    }
 
+    // Riduce il tempo totale rimanente
+    fun reduceTime(millis: Long, timeLeft:Long): Long {
+        val reducedTime = (timeLeft - millis).coerceAtLeast(0) // Impedisce tempo negativo
+        return reducedTime
+    }
 }
