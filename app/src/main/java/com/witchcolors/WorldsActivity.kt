@@ -12,7 +12,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class WorldsActivity : AppCompatActivity() {
-
+    private lateinit var homeButton: ImageButton
+    private lateinit var shopButton: ImageButton
+    private lateinit var statsButton: ImageButton
+    private lateinit var galleryButton: ImageButton
     private lateinit var leftArrowButton: ImageButton
     private lateinit var rightArrowButton: ImageButton
     private lateinit var worldImageButton: ImageButton
@@ -20,7 +23,7 @@ class WorldsActivity : AppCompatActivity() {
 
     private val worldImages = listOf(
         R.drawable.mondo1, // Immagine per il Mondo 1
-        R.drawable.challenge  // Immagine per il Mondo 2
+        R.drawable.challenge1  // Immagine per il Mondo 2
         // Aggiungi altre immagini di mondi
     )
     private val worldNames = listOf("Mondo 1", "Mondo 2") // Nome per ciascun mondo
@@ -53,6 +56,11 @@ class WorldsActivity : AppCompatActivity() {
                     )
         }
 
+        //Init variable
+        homeButton = findViewById(R.id.homeButton)
+        shopButton = findViewById(R.id.shopButton)
+        statsButton = findViewById(R.id.statsButton)
+        galleryButton = findViewById(R.id.galleryButton)
         worldImageButton = findViewById(R.id.worldImageButton)
         worldName = findViewById(R.id.worldTitle)
         leftArrowButton = findViewById(R.id.leftArrowButton)
@@ -60,6 +68,26 @@ class WorldsActivity : AppCompatActivity() {
         
         // Mostra l’immagine e titolo del mondo attuale
         updateWorldDisplay(worldImageButton, worldName)
+
+        galleryButton.setOnClickListener {
+            val intent = Intent(this, GalleryActivity::class.java)
+            startActivity(intent)
+        }
+
+        homeButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+
+        shopButton.setOnClickListener {
+            val intent = Intent(this, ShopActivity::class.java)
+            startActivity(intent)
+        }
+
+        statsButton.setOnClickListener {
+            val intent = Intent(this, WitchStatsActivity::class.java)
+            startActivity(intent)
+        }
 
         // Gestisci clic della freccia sinistra
         leftArrowButton.setOnClickListener {

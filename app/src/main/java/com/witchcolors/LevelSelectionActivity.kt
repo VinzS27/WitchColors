@@ -1,5 +1,6 @@
 package com.witchcolors
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -8,15 +9,21 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.Button
 import android.widget.GridLayout
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class LevelSelectionActivity : AppCompatActivity() {
     private lateinit var worldName: TextView
     private lateinit var levelsGrid: GridLayout
+    private lateinit var homeButton: ImageButton
+    private lateinit var shopButton: ImageButton
+    private lateinit var statsButton: ImageButton
+    private lateinit var galleryButton: ImageButton
 
     private var worldIndex = 0
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_level_selection)
@@ -42,9 +49,34 @@ class LevelSelectionActivity : AppCompatActivity() {
                             or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     )
         }
+        //Init variable
+        homeButton = findViewById(R.id.homeButton)
+        shopButton = findViewById(R.id.shopButton)
+        statsButton = findViewById(R.id.statsButton)
+        galleryButton = findViewById(R.id.galleryButton)
         worldIndex = intent.getIntExtra("worldIndex", 0)
         worldName = findViewById(R.id.worldTitle)
         levelsGrid = findViewById(R.id.levelContainer)
+
+        galleryButton.setOnClickListener {
+            val intent = Intent(this, GalleryActivity::class.java)
+            startActivity(intent)
+        }
+
+        homeButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+
+        shopButton.setOnClickListener {
+            val intent = Intent(this, ShopActivity::class.java)
+            startActivity(intent)
+        }
+
+        statsButton.setOnClickListener {
+            val intent = Intent(this, WitchStatsActivity::class.java)
+            startActivity(intent)
+        }
 
         worldName.text = "Livelli del Mondo ${worldIndex + 1}"
 

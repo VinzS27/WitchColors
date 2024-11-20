@@ -3,13 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/menu_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/menu"/>
+
     <LinearLayout
         android:id="@+id/layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:background="@color/black">
+        android:background="@drawable/top_background">
 
         <LinearLayout
             android:id="@+id/layout_dust"
@@ -36,7 +44,7 @@
                 android:layout_marginBottom="20dp"
                 android:scaleType="centerCrop"
                 android:text="0"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="16dp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -66,7 +74,7 @@
                 android:layout_marginBottom="20dp"
                 android:scaleType="centerCrop"
                 android:text="0"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="16dp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -97,18 +105,11 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
                 android:text="30"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="30dp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/menu_img"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/layout1"
-        android:background="@drawable/menu"/>
 
     <LinearLayout
         android:id="@+id/layout2"
@@ -236,7 +237,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:background="@color/black">
+            android:background="@drawable/bottom_background">
 
         <ImageButton
             android:id="@+id/powerScore"

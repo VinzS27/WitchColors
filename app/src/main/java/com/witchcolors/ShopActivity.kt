@@ -1,6 +1,7 @@
 package com.witchcolors
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -30,8 +31,10 @@ class ShopActivity : AppCompatActivity() {
     private lateinit var iceButton: ImageButton
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
+    private lateinit var statsButton: ImageButton
+    private lateinit var galleryButton: ImageButton
+    private lateinit var homeButton: ImageButton
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop)
@@ -56,17 +59,35 @@ class ShopActivity : AppCompatActivity() {
         }
 
         //init variable
-        moneyText = findViewById(R.id.moneyTextView)
+        moneyText = findViewById(R.id.moneyText)
         reviveButton = findViewById(R.id.reviveButton)
+        scoreButton = findViewById(R.id.scorePotionButton)
         iceButton = findViewById(R.id.icePotionButton)
         poisonButton = findViewById(R.id.poisonPotionButton)
-        scoreButton = findViewById(R.id.scorePotionButton)
+        statsButton = findViewById(R.id.statsButton)
+        galleryButton = findViewById(R.id.galleryButton)
+        homeButton = findViewById(R.id.homeButton)
 
         //Get player from db
         gameDAO = GameDatabase.getDatabase(application).gameDao()
         gameRep = GameRepository(gameDAO)
 
         UpdateUI()
+
+        galleryButton.setOnClickListener {
+            val intent = Intent(this, GalleryActivity::class.java)
+            startActivity(intent)
+        }
+
+        statsButton.setOnClickListener {
+            val intent = Intent(this, WitchStatsActivity::class.java)
+            startActivity(intent)
+        }
+
+        homeButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
 
         reviveButton.setOnClickListener {
             val item = "Resurrection_Token"

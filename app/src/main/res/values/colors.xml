@@ -7,4 +7,15 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="lavender">#8692f7</color>
+    <color name="lavender2">#9CA6FD</color>
+    <color name="grey">#d2d2d2</color>
+    <color name="rosa">#FFC0CB</color>
+    <color name="senape">#C7BD84</color>
+    <color name="giallo_pergamena_chiaro">#FFD607</color>
+    <color name="giallo_pergamena">#F6E3BE</color>
+    <color name="giallo_pergamena_fade">#73F6E3BE</color>
+    <color name="giallo_pergamena_scuro">#b58136</color>
+    <color name="marrone">#6A452C</color>
+    <color name="marrone2">#3D2217</color>
 </resources>

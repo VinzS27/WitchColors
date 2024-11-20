@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var gameDAO: GameDAO
     private lateinit var worldsButton: ImageButton
     private lateinit var shopButton: ImageButton
+    private lateinit var statsButton: ImageButton
+    private lateinit var galleryButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +53,8 @@ class MainActivity : AppCompatActivity() {
         //Init variable
         worldsButton = findViewById(R.id.classicChallengeButton)
         shopButton = findViewById(R.id.shopButton)
+        statsButton = findViewById(R.id.statsButton)
+        galleryButton = findViewById(R.id.galleryButton)
         moneyText = findViewById(R.id.money)
         scoreText = findViewById(R.id.score)
 
@@ -59,6 +63,11 @@ class MainActivity : AppCompatActivity() {
         gameRep = GameRepository(gameDAO)
 
         UpdateUI()
+
+        galleryButton.setOnClickListener {
+            val intent = Intent(this, GalleryActivity::class.java)
+            startActivity(intent)
+        }
 
         worldsButton.setOnClickListener {
             val intent = Intent(this, WorldsActivity::class.java)
@@ -69,6 +78,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ShopActivity::class.java)
             startActivity(intent)
         }
+
+        statsButton.setOnClickListener {
+            val intent = Intent(this, WitchStatsActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun UpdateUI() {
@@ -77,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         gameRep.score.observe(this){ scoreValue ->
             scoreText.text = "$scoreValue"}
     }
+
     // Aggiorna la UI quando si torna alla schermata principale
     override fun onResume() {
         super.onResume()
@@ -107,5 +122,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //Aggiungere funzione che quando si chiude la schermata i soldi si guadagnano ugualmente
 }

@@ -48,6 +48,7 @@ class GameActivity : AppCompatActivity() {
     private var money = 0
     private var currentLevel = 0
     private var level = 0
+    private var maxLevel = 0
     private var worldIndex = 0
     private var swapJob: Job? = null // Job per gestire il timer di scambio
     private val bombAnimationJobs = mutableListOf<Job>()
@@ -129,6 +130,7 @@ class GameActivity : AppCompatActivity() {
         //Get current world and current level for settings
         worldIndex = intent.getIntExtra("worldIndex", 0)
         level = intent.getIntExtra("level", 1)
+        maxLevel = level*10
 
         // Setting colors grid
         gameGrid = GameGrid(rows, cols, emptyCell, level, worldIndex)
@@ -168,7 +170,7 @@ class GameActivity : AppCompatActivity() {
         //così il target è sempre una cella piena
         targetColor = gameGrid.getColorAt(randomRow, randomCol)
         colorToFind.text = "Trova il colore $targetColor"
-        levelsText.text = "$currentLevel/$level"
+        levelsText.text = "$currentLevel/$maxLevel"
 
         drawGrid()
         increaseDifficulty()
@@ -279,18 +281,18 @@ class GameActivity : AppCompatActivity() {
         // Disabilita tutti i bottoni delle bombe
         activeBombButtons.forEach { button ->
             button.alpha = 1f
-            button.setImageDrawable(null)
+            button.setImageResource(R.drawable.button_crack192)
             button.isEnabled = false
         }
         activeBombButtons.clear() // Svuota la lista dei bottoni
     }
 
     private fun effectBomb() {
+        checkColor("bomba")
         stopBombAnimation()
         MediaPlayer.create(this, R.raw.explosion).start()
         val shakeAnimation = AnimationUtils.loadAnimation(this, R.anim.shake)
         objectsLayout.startAnimation(shakeAnimation)
-        checkColor("bomba")
     }
 
     // Recupera il bottone nella posizione specifica del layout della griglia
@@ -362,12 +364,12 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun checkColor(selectedColor: String) {
-        stopBombAnimation()
         if (selectedColor == targetColor) {
             updateUI(5, 10, 0)
             currentLevel++
             stopTimer()
             stopAutomaticSwaps()
+            stopBombAnimation()
 
             // evento ogni 10 livelli
             if (currentLevel % 10 == 0) {
