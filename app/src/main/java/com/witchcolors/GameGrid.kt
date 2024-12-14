@@ -5,7 +5,8 @@ class GameGrid(private val rows: Int, private val cols: Int, private var emptyCe
 
     private val objects = listOf("sfera","mela", "spada", "pozione","cappello","fungo")
     private val colors = listOf("Rosso", "Giallo", "Verde","Celeste", "Blu", "Viola", "Arancione", "Rosa", "Nero", "Bianco")
-    private val powerups = listOf("Veleno", "Gelo", "Double_Score","Magic_Dust", "ExtraLife")
+    private val powers = listOf("Veleno", "Gelo", "Double_Score","Magic_Dust", "ExtraLife")
+    private val witchSpells = listOf("buio","nebbia"/*,"mescola","cassa"*/)
 
     // Griglia di celle vuote
     private var grid: Array<Array<String>> = Array(rows) { Array(cols) { "" } }
@@ -19,7 +20,7 @@ class GameGrid(private val rows: Int, private val cols: Int, private var emptyCe
     }
 
     fun getRandomPower(): String {
-        return powerups.random()
+        return powers.random()
     }
 
     // Restituisce una lista di coordinate di celle piene
@@ -42,6 +43,27 @@ class GameGrid(private val rows: Int, private val cols: Int, private var emptyCe
             4, 5 -> 5         // 10% di probabilità ai livelli 4 e 5
             else -> 0
         }
+    }
+
+    fun getSpellProbability(): Int {
+        if(worldIndex>=1) {
+            return when (level) {
+                0, 1 -> 5
+                2 -> 20
+                3 -> 35
+                4, 5 -> 50
+                else -> 0
+            }
+        }
+        return 0
+    }
+
+    fun getWitchSpell(): String{
+        return if (worldIndex == 1) witchSpells.random() else ""
+    }
+
+    fun getInitialTimer(): Long {
+        return 10000L + (level * 10000L)
     }
 
     fun updateEmptyCells(cells:Int){
@@ -74,11 +96,6 @@ class GameGrid(private val rows: Int, private val cols: Int, private var emptyCe
             }
         }
     }
-
-    fun getInitialTimer(): Long {
-        return 10000L + (level * 10000L)
-    }
-
     // Riduce il tempo totale rimanente
     fun reduceTime(millis: Long, timeLeft:Long): Long {
         val reducedTime = (timeLeft - millis).coerceAtLeast(0) // Impedisce tempo negativo

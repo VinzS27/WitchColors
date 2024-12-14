@@ -10,8 +10,10 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.witchcolors.DAO.GameDAO
@@ -21,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.appcompat.app.AlertDialog
+import com.witchcolors.View.DarkView
 import com.witchcolors.model.Item
 import com.witchcolors.utility.ColorsUtility
 import kotlinx.coroutines.Job
@@ -35,6 +38,7 @@ class GameActivity : AppCompatActivity() {
     private lateinit var moneyText: TextView
     private lateinit var timerText: TextView
     private lateinit var levelsText: TextView
+    private lateinit var comboText: TextView
     private lateinit var potionScoreButton: ImageButton
     private lateinit var potionPoisonButton: ImageButton
     private lateinit var potionFreezeButton: ImageButton
@@ -42,17 +46,24 @@ class GameActivity : AppCompatActivity() {
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
     private lateinit var gameGrid: GameGrid
+    private lateinit var darkView: DarkView
+    private lateinit var effectOverlay: FrameLayout
+    private lateinit var fullscreenEffect: ImageView
 
     private var score = 0
     private var lives = 3
     private var money = 0
     private var currentLevel = 0
+    private var scoreCombo = 0
     private var level = 0
     private var maxLevel = 0
     private var worldIndex = 0
+    private var darkJob: Job? = null //Job per ciclo buio luce
     private var swapJob: Job? = null // Job per gestire il timer di scambio
-    private val bombAnimationJobs = mutableListOf<Job>()
-    private val activeBombButtons = mutableListOf<ImageButton>()
+    private var swapSpeed: Long = 0
+    private val bombAnimationJobs = mutableListOf<Job>() //job per intervallo di scoppio delle bombe
+    private val activeBombButtons = mutableListOf<ImageButton>() //tiene traccia delle bombe attive
+    private val objectsButton = mutableListOf<View>() // Lista per tenere traccia degli oggetti nella griglia
     private var targetColor: String = ""
     private var timer: CountDownTimer? = null
     private var timeLeft: Long = 0
@@ -97,18 +108,31 @@ class GameActivity : AppCompatActivity() {
         gameDAO = GameDatabase.getDatabase(application).gameDao()
         gameRep = GameRepository(gameDAO)
 
-        // Inizializzazione delle variabili xml
+        // Init xml
         colorToFind = findViewById(R.id.colorToFind)
         scoreText = findViewById(R.id.score)
         livesText = findViewById(R.id.lives)
         moneyText = findViewById(R.id.money)
         timerText = findViewById(R.id.timer)
         levelsText = findViewById(R.id.levels)
+        comboText = findViewById(R.id.combo)
         objectsLayout = findViewById(R.id.objectsLayout)
         potionScoreButton = findViewById(R.id.powerScore)
         potionFreezeButton = findViewById(R.id.powerIce)
         potionPoisonButton = findViewById(R.id.powerPoison)
+        fullscreenEffect = findViewById(R.id.fullscreenEffects)
 
+        //witch spells
+        effectOverlay = findViewById(R.id.effectOverlay)
+        darkView = DarkView(this, null).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+        effectOverlay.addView(darkView)
+
+        //powers
         potionPoisonButton.setOnClickListener {
             if (hasPoisonPotion) {
                 usePoisonEffect()
@@ -129,15 +153,14 @@ class GameActivity : AppCompatActivity() {
 
         //Get current world and current level for settings
         worldIndex = intent.getIntExtra("worldIndex", 0)
-        level = intent.getIntExtra("level", 1)
+        level = intent.getIntExtra("level", 0)
         maxLevel = level*10
 
         // Setting colors grid
         gameGrid = GameGrid(rows, cols, emptyCell, level, worldIndex)
         timeLeft = gameGrid.getInitialTimer()
 
-
-        // Check if player has the revive token and potions
+        // Check player utils
         CoroutineScope(Dispatchers.IO).launch {
             val itemsToCheck = mapOf(
                 "Resurrection_Token" to { hasReviveToken = true },
@@ -172,24 +195,169 @@ class GameActivity : AppCompatActivity() {
         colorToFind.text = "Trova il colore $targetColor"
         levelsText.text = "$currentLevel/$maxLevel"
 
+
         drawGrid()
         increaseDifficulty()
+        if (scoreCombo == 3 && (1..100).random() <= gameGrid.getSpellProbability()) {
+            castSpells() // lancia un incantesimo
+        }
         startTimer()
+    }
+
+    private fun castSpells(){
+        val spell = gameGrid.getWitchSpell()
+        when (spell) {
+            "buio" -> activateDarkMode()
+            "nebbia" -> activateFog()
+//            "mescola" -> activateShuffle()
+//            "cassa" -> activeBoxs()
+        }
     }
 
     private fun increaseDifficulty() {
         // Attiva gli scambi automatici per i livelli 5 e successivi
         if (currentLevel >= 5) {
             startAutomaticSwaps()
-        } else {
-            stopAutomaticSwaps()
         }
 
         //testo di colore random
         if (currentLevel >= 10) {
             val randomColorName = ColorsUtility.getRandomColorName()
             colorToFind.setTextColor(ColorsUtility.getColorFromName(randomColorName))
+            swapSpeed=500
         }
+    }
+
+    private fun startNightAnimation() {
+        darkJob = CoroutineScope(Dispatchers.Main).launch {
+            val totalTime = 2000L // Tempo per portare la tendina giù
+            val frameDuration = 16L // Durata di un frame (circa 60 fps)
+            val totalFrames = totalTime / frameDuration
+            var currentFrame = 0
+
+            while (isActive) {
+                val progress = (currentFrame.toFloat() / totalFrames)
+
+                // Calcola l'altezza trasparente per far scendere la tendina
+                val maxHeight = darkView.height.toFloat()
+                val height = maxHeight * progress // Tendina scende
+
+                darkView.updateHolePosition(height)
+
+                // Verifica se la tendina è completamente giù
+                if (progress >= 1f) {
+                    fadeOutDarkViewAnimation() // Dissolvenza tendina
+                    fadeInButtonsAnimation(2000,1f)   // comparsa bottoni
+                    break
+                } else {
+                    currentFrame++
+                }
+                delay(frameDuration)
+            }
+        }
+
+    }
+
+    private fun stopNightAnimation() {
+        effectOverlay.visibility = View.GONE
+        darkJob?.cancel()
+        fadeInDarkViewAnimation()
+        fadeInButtonsAnimation(0,1f)   // comparsa bottoni
+        effectOverlay.removeView(darkView)
+    }
+
+    private fun activateDarkMode(){
+        darkView = DarkView(this, null).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+        darkView.alpha = 1f
+        effectOverlay.addView(darkView)
+        effectOverlay.visibility = View.VISIBLE
+        startNightAnimation()
+        fadeOutButtonsAnimation(2000, 0f)
+    }
+
+    private fun activateFog() {
+        fullscreenEffect.visibility = View.VISIBLE
+        fadeOutViewAnimation(9000) //9s
+        fadeOutButtonsAnimation(500, 0.5f)
+    }
+
+    private fun stopFullscreenEffect(){
+        fadeInViewAnimation()
+        fullscreenEffect.visibility = View.GONE
+        fadeInButtonsAnimation(0,1f)   // comparsa bottoni
+    }
+
+    //scomparsa tendina scura
+    private fun fadeOutDarkViewAnimation() {
+        darkView.animate()
+            .alpha(0f) // Imposta trasparenza a 0
+            .setDuration(2000L) // Durata 2 secondi
+            .withEndAction {
+                darkView.alpha = 1f // Resetta
+                effectOverlay.visibility = View.GONE
+            }
+            .start()
+    }
+
+    //comparsa tendina scura
+    private fun fadeInDarkViewAnimation() {
+        darkView.animate()
+            .alpha(1f) // Imposta trasparenza a 0
+            .setDuration(0L) // Durata 2 secondi
+            .start()
+    }
+
+    //scomparsa bottoni
+    private fun fadeOutButtonsAnimation(duration:Long, alpha:Float) {
+        objectsButton.forEach { button ->
+            button.alpha = 1f // Imposta inizialmente trasparenza a 1
+            button.animate()
+                .alpha(alpha) // Gradualmente invisibili
+                .setDuration(duration) // Durata 1 secondo
+                .withEndAction {
+                    button.alpha = alpha // Rimane invisibile
+                }
+                .start()
+        }
+    }
+
+    //comparsa bottoni
+    private fun fadeInButtonsAnimation(duration:Long, alpha:Float) {
+        objectsButton.forEach { button ->
+            button.alpha = 0f // Imposta inizialmente trasparenza a 0
+            button.animate()
+                .alpha(alpha) // Gradualmente visibili
+                .setDuration(duration) // Durata 2 secondi
+                .withEndAction {
+                    button.alpha = alpha // Resetta la trasparenza per il prossimo ciclo
+                }
+                .start()
+        }
+    }
+
+    //effetti fullscreen
+    private fun fadeOutViewAnimation(duration:Long) {
+        fullscreenEffect.animate()
+            .alpha(0f) // Imposta trasparenza a 0
+            .setDuration(duration)
+            .withEndAction {
+                fullscreenEffect.alpha = 1f // Resetta la trasparenza per il prossimo ciclo
+                fullscreenEffect.visibility = View.GONE
+            }
+            .start()
+    }
+
+    //effetti fullscreen
+    private fun fadeInViewAnimation() {
+        fullscreenEffect.animate()
+            .alpha(1f) // Imposta trasparenza a 1
+            .setDuration(0)
+            .start()
     }
 
     private fun startAutomaticSwaps() {
@@ -197,7 +365,7 @@ class GameActivity : AppCompatActivity() {
         swapJob = CoroutineScope(Dispatchers.Main).launch {
             while (isActive) {
                 performSwapWithAnimation()
-                delay(1000) //scambia questi due per far partire subito l'animazione
+                delay(1000-swapSpeed) //scambia questi due per far partire subito l'animazione
             }
         }
     }
@@ -244,24 +412,6 @@ class GameActivity : AppCompatActivity() {
             .start()
     }
 
-    //animazione che applica un effetto dissolvenza
-    private fun animateSwapFade(button1: ImageButton, button2: ImageButton) {
-        // Ottieni le immagini attuali per i bottoni
-        val drawable1 = button1.drawable
-        val drawable2 = button2.drawable
-
-        // Imposta un’animazione di crossfade per i due bottoni
-        button1.animate().alpha(0f).setDuration(500).withEndAction {
-            button1.setImageDrawable(drawable2)
-            button1.animate().alpha(1f).duration = 500
-        }.start()
-
-        button2.animate().alpha(0f).setDuration(500).withEndAction {
-            button2.setImageDrawable(drawable1)
-            button2.animate().alpha(1f).duration = 500
-        }.start()
-    }
-
     private fun animateBomb(button: ImageButton) {
         activeBombButtons.add(button) // Aggiungi il bottone alla lista delle bombe attive
         val job = CoroutineScope(Dispatchers.Main).launch {
@@ -304,6 +454,7 @@ class GameActivity : AppCompatActivity() {
     //Imposta la matrice degli oggetti
     private fun drawGrid() {
         objectsLayout.removeAllViews()
+        objectsButton.clear() // Pulisce la lista dei bottoni ad ogni nuova griglia
         var params: GridLayout.LayoutParams
 
         for (i in 0 until rows) {
@@ -326,7 +477,8 @@ class GameActivity : AppCompatActivity() {
                     colorView.setOnClickListener {
                         checkColor(color)
                     }
-                    objectsLayout.addView(colorView)
+                    objectsLayout.addView(colorView) // aggiungi il bottone alla griglia
+                    objectsButton.add(colorView) // aggiungi il bottone alla lista
 
                 } else {
                     val emptyView = ImageButton(this)
@@ -349,6 +501,7 @@ class GameActivity : AppCompatActivity() {
                     emptyView.layoutParams = params
                     emptyView.setBackgroundResource(R.drawable.sfondo192)
                     objectsLayout.addView(emptyView)
+                    objectsButton.add(emptyView)
                 }
             }
         }
@@ -365,11 +518,14 @@ class GameActivity : AppCompatActivity() {
 
     private fun checkColor(selectedColor: String) {
         if (selectedColor == targetColor) {
+            scoreCombo = (scoreCombo+1).coerceAtMost(3)
             updateUI(5, 10, 0)
             currentLevel++
             stopTimer()
             stopAutomaticSwaps()
             stopBombAnimation()
+            stopNightAnimation()
+            stopFullscreenEffect()
 
             // evento ogni 10 livelli
             if (currentLevel % 10 == 0) {
@@ -380,6 +536,7 @@ class GameActivity : AppCompatActivity() {
                 startNewLevel()
             }
         } else {
+            scoreCombo = 0
             updateUI(0, 0, -1)
             if (lives <= 0) {
                 livesText.text = "0"
@@ -392,6 +549,8 @@ class GameActivity : AppCompatActivity() {
         stopTimer()
         stopAutomaticSwaps()
         stopBombAnimation()
+        stopNightAnimation()
+        stopFullscreenEffect()
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Game Over")
@@ -421,7 +580,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun grantPowerUp() {
-        if (currentLevel >= level * 10) {
+        if (currentLevel >= maxLevel) {
             finish()
         }else{
             val randomPowerup = gameGrid.getRandomPower()
@@ -431,6 +590,7 @@ class GameActivity : AppCompatActivity() {
                 "Double_Score" -> activateDoubleScore()
                 "Magic_Dust" -> updateUI(100, 0, 0)
                 "ExtraLife" -> updateUI(0, 0, 1)
+                "ExtraTime" -> timeLeft+=5000L
             }
 
             val builder = AlertDialog.Builder(this)
@@ -497,11 +657,12 @@ class GameActivity : AppCompatActivity() {
 
     private fun updateUI(m: Int, s: Int, l: Int) {
         money += m
-        score += s
+        score += s*scoreCombo
         lives += l
         moneyText.text = "$money"
         scoreText.text = "$score"
         livesText.text = "$lives"
+        comboText.text = "combo x$scoreCombo"
     }
 
     private fun activateFreeze() {
@@ -570,6 +731,9 @@ class GameActivity : AppCompatActivity() {
         super.onDestroy()
         stopAutomaticSwaps()
         stopTimer()
+        stopBombAnimation()
+        stopNightAnimation()
+        stopFullscreenEffect()
     }
 
     //FULLSCREEN RESET ON TOUCH
