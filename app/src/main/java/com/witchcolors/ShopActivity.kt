@@ -73,22 +73,11 @@ class ShopActivity : AppCompatActivity() {
         gameRep = GameRepository(gameDAO)
 
         UpdateUI()
+        setupNavigationButtons()
+        setupShopButtons()
+    }
 
-        galleryButton.setOnClickListener {
-            val intent = Intent(this, GalleryActivity::class.java)
-            startActivity(intent)
-        }
-
-        statsButton.setOnClickListener {
-            val intent = Intent(this, WitchStatsActivity::class.java)
-            startActivity(intent)
-        }
-
-        homeButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
-
+    private fun setupShopButtons() {
         reviveButton.setOnClickListener {
             val item = "Resurrection_Token"
             buyItems(item)
@@ -104,6 +93,23 @@ class ShopActivity : AppCompatActivity() {
         scoreButton.setOnClickListener {
             val item = "Double_Score"
             buyItems(item)
+        }
+    }
+
+    private fun setupNavigationButtons() {
+        galleryButton.setOnClickListener {
+            val intent = Intent(this, GalleryActivity::class.java)
+            startActivity(intent)
+        }
+
+        statsButton.setOnClickListener {
+            val intent = Intent(this, WitchStatsActivity::class.java)
+            startActivity(intent)
+        }
+
+        homeButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 

@@ -1,8 +1,7 @@
 package com.witchcolors
 
-import android.annotation.SuppressLint
-import android.content.Intent
-import android.graphics.Color
+import android.app.Dialog
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -10,28 +9,33 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.widget.GridLayout
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.graphics.Color
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.LiveData
 import com.witchcolors.DAO.GameDAO
 import com.witchcolors.config.GameDatabase
+import com.witchcolors.model.Collection
+import com.witchcolors.model.Item
 import com.witchcolors.repository.GameRepository
+import com.witchcolors.utility.ColorsUtility
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class GalleryActivity : AppCompatActivity() {
+class CollectionActivity : AppCompatActivity() {
 
-    private lateinit var moneyText: TextView
-    private lateinit var scoreText: TextView
+    private lateinit var collectionGrid: GridLayout
     private lateinit var gameRep: GameRepository
     private lateinit var gameDAO: GameDAO
-    private lateinit var shopButton: ImageButton
-    private lateinit var statsButton: ImageButton
-    private lateinit var homeButton: ImageButton
-    private lateinit var objectsGrid: GridLayout
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_gallery)
-
+        setContentView(R.layout.activity_collection)
         //FULLSCREEN
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // Android 11+ (API 30+)
@@ -52,83 +56,67 @@ class GalleryActivity : AppCompatActivity() {
                             or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     )
         }
+        collectionGrid = findViewById(R.id.collectionGrid)
 
-        //Init variable
-        shopButton = findViewById(R.id.shopButton)
-        statsButton = findViewById(R.id.statsButton)
-        homeButton = findViewById(R.id.homeButton)
-        moneyText = findViewById(R.id.money)
-        scoreText = findViewById(R.id.score)
-        objectsGrid = findViewById(R.id.objectsContainer)
-
-        //init database
+        //Get from db
         gameDAO = GameDatabase.getDatabase(application).gameDao()
         gameRep = GameRepository(gameDAO)
 
-        UpdateUI()
-        setupNavigationButtons()
-        loadCollectionCategories()
-    }
+        // Recupera la categoria selezionata
+        val categoryName = intent.getStringExtra("CATEGORY_NAME")
 
-    private fun setupNavigationButtons() {
-        homeButton.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
-
-        shopButton.setOnClickListener {
-            startActivity(Intent(this, ShopActivity::class.java))
-        }
-
-        statsButton.setOnClickListener {
-            startActivity(Intent(this, WitchStatsActivity::class.java))
+        // Recupera e popola i dati
+        if (categoryName != null) {
+            populateCollections(categoryName)
         }
     }
 
-    private fun setGridParams(): GridLayout.LayoutParams {
-        val params = GridLayout.LayoutParams()
-        params.setMargins(10, 10, 10, 10)
-        return params
+    // Recupera le collezioni della categoria specifica
+    private fun populateCollections(categoryName: String) {
+        gameDAO.getAllCollectionByCategory(categoryName).observe(this) { collections ->
+            if (collections != null && collections.isNotEmpty()) {
+                populateCollectionGrid(collections)
+            }
+        }
     }
 
-    private fun loadCollectionCategories() {
-        val collectionCategories = listOf(
-            R.drawable.category_strega to "strega",
-            R.drawable.category_casa to "casa",
-            R.drawable.category_casa to "castello",
-            R.drawable.category_casa to "giardino",
-            R.drawable.category_casa to "secret",
-            R.drawable.category_casa to "alternativo",
-            R.drawable.category_casa to "oggetti",
-            R.drawable.category_casa to "villain",
-            R.drawable.category_casa to "storie"
-        )
+    private fun populateCollectionGrid(collections: List<Collection>) {
+        collectionGrid.removeAllViews()
 
-        for ((imageRes, categoryName) in collectionCategories) {
+        for (obj in collections) {
             val button = ImageButton(this).apply {
-                layoutParams = setGridParams()
                 setBackgroundResource(android.R.color.transparent)
-                setImageResource(imageRes)
-                setOnClickListener {
-                    val intent = Intent(this@GalleryActivity, CollectionActivity::class.java)
-                    intent.putExtra("CATEGORY_NAME", categoryName)
-                    startActivity(intent)
+                if (obj.collected){
+                    layoutParams = GridLayout.LayoutParams().apply {
+                        width = 256
+                        height = 256
+                        setMargins(10, 10, 10, 10)
+                    }
+                    setImageResource(ColorsUtility.getCollectionFromName(obj.name))
+                    setOnClickListener {
+                        showObjectDetails(obj) // Mostra i dettagli dell'oggetto
+                    }
+                }else{
+                    layoutParams = GridLayout.LayoutParams().apply {
+                        width = 256
+                        height = 455
+                        setMargins(10, 10, 10, 10)
+                    }
+                    setImageResource(R.drawable.card_retro_256)
                 }
             }
-            objectsGrid.addView(button)
+            collectionGrid.addView(button)
         }
     }
 
-    private fun UpdateUI() {
-        gameRep.money.observe(this) { moneyValue ->
-            moneyText.text = "$moneyValue"}
-        gameRep.score.observe(this){ scoreValue ->
-            scoreText.text = "$scoreValue"}
-    }
-
-    // Aggiorna la UI quando si torna alla schermata principale
-    override fun onResume() {
-        super.onResume()
-        UpdateUI()
+    private fun showObjectDetails(obj: Collection) {
+        val dialog = Dialog(this)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.setContentView(R.layout.dialog_object_details)
+        dialog.findViewById<ImageView>(R.id.objectImage).setImageResource(ColorsUtility.getCollectionFromName(obj.name))
+        dialog.findViewById<TextView>(R.id.objectName).text = obj.name
+        dialog.findViewById<TextView>(R.id.objectDescription).text = obj.description
+        dialog.show()
     }
 
     //FULLSCREEN RESET ON TOUCH
@@ -154,5 +142,4 @@ class GalleryActivity : AppCompatActivity() {
             }
         }
     }
-
 }

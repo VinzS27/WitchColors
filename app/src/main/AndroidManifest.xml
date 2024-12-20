@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WitchColors"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
@@ -52,6 +53,12 @@
             android:theme="@style/AppTheme.FullScreen" />
         <activity
             android:name=".GalleryActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.FullScreen" />
+
+        <activity
+            android:name=".CollectionActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.FullScreen" />

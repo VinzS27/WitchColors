@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.witchcolors.model.Item
 import com.witchcolors.model.Player
+import com.witchcolors.model.Collection
 
 @Dao
 interface GameDAO {
@@ -46,5 +47,16 @@ interface GameDAO {
 
     @Query("UPDATE item_table SET quantity = quantity + :Quantity WHERE id =:Id")
     suspend fun updateItemQuantityById(Id:Int, Quantity:Int)
+
+    //-------------- COLLECTION DAO --------------------//
+
+    @Query("SELECT * FROM collection_table")
+    fun getAllCollections(): LiveData<List<Collection>>
+
+    @Query("SELECT * FROM collection_table WHERE category = :categoryName")
+    fun getAllCollectionByCategory(categoryName: String): LiveData<List<Collection>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertCollection(collection: Collection)
 
 }

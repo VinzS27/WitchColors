@@ -58,6 +58,32 @@ class LevelSelectionActivity : AppCompatActivity() {
         worldName = findViewById(R.id.worldTitle)
         levelsGrid = findViewById(R.id.levelContainer)
 
+        setupNavigationButtons()
+        loadLevels()
+    }
+
+    private fun loadLevels(){
+        worldName.text = "Mondo ${worldIndex + 1}"
+
+        val levelsInWorld = 5
+        var params: GridLayout.LayoutParams
+        for (level in 1..levelsInWorld) {
+            val levelButton = Button(this).apply {
+                text = "$level"
+                params = setGridParams()
+                setOnClickListener {
+                    val intent = Intent(this@LevelSelectionActivity, GameActivity::class.java)
+                    intent.putExtra("worldIndex", worldIndex)
+                    intent.putExtra("level", level)
+                    startActivity(intent)
+                }
+            }
+            levelButton.layoutParams = params
+            levelsGrid.addView(levelButton)
+        }
+    }
+
+    private fun setupNavigationButtons() {
         galleryButton.setOnClickListener {
             val intent = Intent(this, GalleryActivity::class.java)
             startActivity(intent)
@@ -77,22 +103,14 @@ class LevelSelectionActivity : AppCompatActivity() {
             val intent = Intent(this, WitchStatsActivity::class.java)
             startActivity(intent)
         }
+    }
 
-        worldName.text = "Livelli del Mondo ${worldIndex + 1}"
-
-        val levelsInWorld = 5
-        for (level in 1..levelsInWorld) {
-            val levelButton = Button(this).apply {
-                text = "$level"
-                setOnClickListener {
-                    val intent = Intent(this@LevelSelectionActivity, GameActivity::class.java)
-                    intent.putExtra("worldIndex", worldIndex)
-                    intent.putExtra("level", level)
-                    startActivity(intent)
-                }
-            }
-            levelsGrid.addView(levelButton)
-        }
+    private fun setGridParams(): GridLayout.LayoutParams {
+        val params = GridLayout.LayoutParams()
+        params.width = 512
+        params.height = 256
+        params.setMargins(0, 10, 0, 0)
+        return params
     }
 
     //FULLSCREEN RESET ON TOUCH

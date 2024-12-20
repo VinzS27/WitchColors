@@ -3,9 +3,7 @@
     android:shape="rectangle">
     <stroke android:width="3dp" android:color="@color/giallo_pergamena_chiaro" />
     <solid android:color="@color/giallo_pergamena_scuro"/>
-    <corners
-        android:bottomLeftRadius="10dp"
-        android:bottomRightRadius="10dp"/>
+
 
     <!--<gradient
         android:startColor="@color/giallo_pergamena"

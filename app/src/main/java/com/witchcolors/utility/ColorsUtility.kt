@@ -108,6 +108,18 @@ object ColorsUtility {
         )
     )
 
+    private val collectionMap = mapOf(
+        "felicità" to R.drawable.button_home,
+        "rabbia" to R.drawable.card_retro_256,
+        "tristezza" to R.drawable.button_stats,
+        "sorpresa" to R.drawable.card_retro_256,
+        "paura" to R.drawable.card_retro_256,
+        "disgusto" to R.drawable.card_retro_256,
+        "vergogna" to R.drawable.card_retro_256,
+        "orgoglio" to R.drawable.card_retro_256,
+        "ansia" to R.drawable.card_retro_256
+    )
+
     fun getDrawableForObjectAndColor(objectType: String, colorName: String): Int? {
         return drawableMap[objectType]?.get(colorName.lowercase())
     }
@@ -118,6 +130,10 @@ object ColorsUtility {
 
     fun getColorFromName(colorName: String): Int {
         return colorMap[colorName] ?: Color.TRANSPARENT
+    }
+
+    fun getCollectionFromName(cardName: String): Int {
+        return collectionMap[cardName] ?: R.drawable.card_retro_256
     }
 
     fun getRandomColorName(): String {

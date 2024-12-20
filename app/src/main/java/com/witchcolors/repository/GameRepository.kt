@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.witchcolors.DAO.GameDAO
 import com.witchcolors.model.Item
 import com.witchcolors.model.Player
+import com.witchcolors.model.Collection
 
 class GameRepository(private val gameDAO: GameDAO) {
 
@@ -13,6 +14,8 @@ class GameRepository(private val gameDAO: GameDAO) {
     val score: LiveData<Int?> = gameDAO.getScore()
     //ITEM
     val getAllItems: LiveData<List<Item>> = gameDAO.getAllItems()
+    //COLLECTION
+    val getAllCollection: LiveData<List<Collection>> = gameDAO.getAllCollections()
 
     //----------PLAYER REPOSITORY----------------
 
@@ -43,5 +46,10 @@ class GameRepository(private val gameDAO: GameDAO) {
             updatePlayerMoney(id, -itemPrice) // Sottrae il costo
             updateItemQuantityById(itemId,1)
         }
+    }
+
+    //------------- COLLECTION REPOSITORY ----------------
+    fun getAllCollectionByCategory(categoryName: String){
+        gameDAO.getAllCollectionByCategory(categoryName)
     }
 }

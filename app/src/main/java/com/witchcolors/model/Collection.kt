@@ -6,16 +6,15 @@ import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Entity(tableName = "gallery_table")
+@Entity(tableName = "collection_table")
 
-data class Gallery(
+data class Collection(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     var name: String,
-    var type: String,
-    var reward: Int,
-    var img: String,
+    var category: String,
+    var description: String,
+    var rarity: Int,
+    var collected: Boolean,
 ) : Parcelable
-{
-    //TODO
-}
+

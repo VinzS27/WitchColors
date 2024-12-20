@@ -6,14 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.witchcolors.DAO.GameDAO
-import com.witchcolors.model.Gallery
+import com.witchcolors.model.Collection
 import com.witchcolors.model.Item
 import com.witchcolors.model.Player
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Player::class, Item::class, Gallery::class], version = 1, exportSchema = false)
+@Database(entities = [Player::class, Item::class, Collection::class], version = 1, exportSchema = false)
 abstract class GameDatabase : RoomDatabase() {
 
     abstract fun gameDao(): GameDAO
@@ -57,8 +57,29 @@ abstract class GameDatabase : RoomDatabase() {
             dao.insertItem(Item(name = "Gelo", price = 100, quantity = 0))
             dao.insertItem(Item(name = "Veleno", price = 100, quantity = 0))
             dao.insertItem(Item(name = "Double_Score", price = 100, quantity = 0))
+
+            //Player
             dao.insertPlayer(Player(id = 1, money = 10000, score = 0))
-            // Aggiungi altri oggetti dello shop qui
+
+            // Collezioni
+            dao.insertCollection(Collection(name = "felicità", category = "strega",
+                description = "Un sorriso può cambiarti la giornata.", rarity = 1, collected = true))
+            dao.insertCollection(Collection(name = "tristezza", category = "strega",
+                description = "Non sempre le cose vanno come vogliamo.", rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "rabbia", category = "strega",
+                description = "da definire", rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "paura", category = "strega",
+                description = "da definire", rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "sorpresa", category = "strega",
+                description = "da definire", rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "disgusto", category = "strega",
+                description = "da definire", rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "vergogna", category = "strega",
+                description = "da definire", rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "orgoglio", category = "strega",
+                description = "da definire", rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "ansia", category = "strega",
+                description = "da definire", rarity = 1, collected = false))
         }
     }
 }
