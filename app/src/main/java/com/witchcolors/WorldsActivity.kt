@@ -22,11 +22,12 @@ class WorldsActivity : AppCompatActivity() {
     private lateinit var worldName: TextView
 
     private val worldImages = listOf(
-        R.drawable.mondo1, // Immagine per il Mondo 1
-        R.drawable.challenge1  // Immagine per il Mondo 2
+        R.drawable.mondo_casa,
+        R.drawable.mondo_castello,
+        R.drawable.challenge1
         // Aggiungi altre immagini di mondi
     )
-    private val worldNames = listOf("Mondo 1", "Mondo 2") // Nome per ciascun mondo
+    private val worldNames = listOf("CASA", "CASTELLO", "FORESTA") // Nome per ciascun mondo
     private var currentWorldIndex = 0
 
     @SuppressLint("MissingInflatedId")

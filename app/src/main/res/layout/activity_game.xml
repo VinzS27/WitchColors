@@ -34,6 +34,13 @@
 
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/fullscreenEffects"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/fog_effect"
+        android:visibility="invisible" />
+
     <!--effetti griglia-->
     <FrameLayout
         android:id="@+id/effectOverlay"
@@ -276,7 +283,10 @@
             android:id="@+id/powerPoison"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:foreground="@drawable/ripple_effect"
             android:src="@drawable/button_potion_grey" />
@@ -290,12 +300,5 @@
             android:foreground="@drawable/ripple_effect"
             android:src="@drawable/button_potion_grey" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/fullscreenEffects"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/fog_effect"
-        android:visibility="invisible"/>
 
 </RelativeLayout>

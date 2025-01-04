@@ -61,25 +61,65 @@ abstract class GameDatabase : RoomDatabase() {
             //Player
             dao.insertPlayer(Player(id = 1, money = 10000, score = 0))
 
-            // Collezioni
+            // Collezione strega
             dao.insertCollection(Collection(name = "felicità", category = "strega",
-                description = "Un sorriso può cambiarti la giornata.", rarity = 1, collected = true))
+                rarity = 1, collected = true))
             dao.insertCollection(Collection(name = "tristezza", category = "strega",
-                description = "Non sempre le cose vanno come vogliamo.", rarity = 1, collected = false))
+                rarity = 1, collected = false))
             dao.insertCollection(Collection(name = "rabbia", category = "strega",
-                description = "da definire", rarity = 1, collected = false))
+                rarity = 1, collected = false))
             dao.insertCollection(Collection(name = "paura", category = "strega",
-                description = "da definire", rarity = 1, collected = false))
+                rarity = 1, collected = false))
             dao.insertCollection(Collection(name = "sorpresa", category = "strega",
-                description = "da definire", rarity = 1, collected = false))
+                rarity = 1, collected = false))
             dao.insertCollection(Collection(name = "disgusto", category = "strega",
-                description = "da definire", rarity = 1, collected = false))
+                rarity = 1, collected = false))
             dao.insertCollection(Collection(name = "vergogna", category = "strega",
-                description = "da definire", rarity = 1, collected = false))
+                rarity = 1, collected = false))
             dao.insertCollection(Collection(name = "orgoglio", category = "strega",
-                description = "da definire", rarity = 1, collected = false))
+                rarity = 1, collected = false))
             dao.insertCollection(Collection(name = "ansia", category = "strega",
-                description = "da definire", rarity = 1, collected = false))
+                rarity = 1, collected = false))
+
+            //Collezione mondo casa
+            dao.insertCollection(Collection(name = "felicità", category = "casa",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "tristezza", category = "casa",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "rabbia", category = "casa",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "paura", category = "casa",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "sorpresa", category = "casa",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "disgusto", category = "casa",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "vergogna", category = "casa",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "orgoglio", category = "casa",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "ansia", category = "casa",
+                rarity = 1, collected = false))
+
+            //Collezione mondo castello
+            dao.insertCollection(Collection(name = "felicità", category = "castello",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "tristezza", category = "castello",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "rabbia", category = "castello",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "paura", category = "castello",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "sorpresa", category = "castello",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "disgusto", category = "castello",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "vergogna", category = "castello",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "orgoglio", category = "castello",
+                rarity = 1, collected = false))
+            dao.insertCollection(Collection(name = "ansia", category = "castello",
+                rarity = 1, collected = false))
         }
     }
 }

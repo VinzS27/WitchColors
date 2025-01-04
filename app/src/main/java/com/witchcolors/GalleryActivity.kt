@@ -94,13 +94,13 @@ class GalleryActivity : AppCompatActivity() {
         val collectionCategories = listOf(
             R.drawable.category_strega to "strega",
             R.drawable.category_casa to "casa",
-            R.drawable.category_casa to "castello",
-            R.drawable.category_casa to "giardino",
+            R.drawable.category_castello to "castello",
+            /*R.drawable.category_casa to "giardino",
             R.drawable.category_casa to "secret",
             R.drawable.category_casa to "alternativo",
             R.drawable.category_casa to "oggetti",
             R.drawable.category_casa to "villain",
-            R.drawable.category_casa to "storie"
+            R.drawable.category_casa to "storie"*/
         )
 
         for ((imageRes, categoryName) in collectionCategories) {

@@ -13,7 +13,6 @@ data class Collection(
     val id: Int = 0,
     var name: String,
     var category: String,
-    var description: String,
     var rarity: Int,
     var collected: Boolean,
 ) : Parcelable

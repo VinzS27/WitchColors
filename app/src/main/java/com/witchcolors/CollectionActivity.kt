@@ -82,25 +82,22 @@ class CollectionActivity : AppCompatActivity() {
 
     private fun populateCollectionGrid(collections: List<Collection>) {
         collectionGrid.removeAllViews()
-
         for (obj in collections) {
             val button = ImageButton(this).apply {
                 setBackgroundResource(android.R.color.transparent)
                 if (obj.collected){
                     layoutParams = GridLayout.LayoutParams().apply {
-                        width = 256
-                        height = 256
-                        setMargins(10, 10, 10, 10)
+                        width = 345
+                        height = 455
                     }
-                    setImageResource(ColorsUtility.getCollectionFromName(obj.name))
+                    setImageResource(ColorsUtility.getCollection256FromName(obj.name))
                     setOnClickListener {
                         showObjectDetails(obj) // Mostra i dettagli dell'oggetto
                     }
                 }else{
                     layoutParams = GridLayout.LayoutParams().apply {
-                        width = 256
+                        width = 345
                         height = 455
-                        setMargins(10, 10, 10, 10)
                     }
                     setImageResource(R.drawable.card_retro_256)
                 }
@@ -113,9 +110,7 @@ class CollectionActivity : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent);
         dialog.setContentView(R.layout.dialog_object_details)
-        dialog.findViewById<ImageView>(R.id.objectImage).setImageResource(ColorsUtility.getCollectionFromName(obj.name))
-        dialog.findViewById<TextView>(R.id.objectName).text = obj.name
-        dialog.findViewById<TextView>(R.id.objectDescription).text = obj.description
+        dialog.findViewById<ImageView>(R.id.objectImage).setImageResource(ColorsUtility.getCollectionFullScreenFromName(obj.name))
         dialog.show()
     }
 
